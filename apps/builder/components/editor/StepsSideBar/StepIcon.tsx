@@ -91,6 +91,8 @@ export const StepIcon = ({ type, ...props }: StepIconProps) => {
       return <ImageIcon color="blue.500" {...props} />
     case OctaStepType.ASSIGN_TO_TEAM:
       return <ImageIcon color="blue.500" {...props} />
+    case OctaStepType.OFFICE_HOURS:
+      return <ImageIcon color="blue.500" {...props} />
 
     case 'start':
       return <FlagIcon {...props} />

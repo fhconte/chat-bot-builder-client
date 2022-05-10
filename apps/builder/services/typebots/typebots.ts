@@ -40,7 +40,8 @@ import {
   OctaStepOptions,
   OctaStepType,
   defaultAssignToTeamOptions,
-  defaultEndConversationOptions
+  defaultEndConversationOptions,
+  defaultOfficeHoursOptions
 
 } from 'models'
 import { Typebot } from 'models'
@@ -292,6 +293,8 @@ const parseOctaStepOptions = (type: OctaStepType): OctaStepOptions => {
       return defaultAssignToTeamOptions
     case OctaStepType.END_CONVERSATION:
       return defaultEndConversationOptions
+    case OctaStepType.OFFICE_HOURS:
+      return defaultOfficeHoursOptions
   }
 }
 

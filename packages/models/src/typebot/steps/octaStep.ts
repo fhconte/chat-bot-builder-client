@@ -11,10 +11,12 @@ export type OctaStepOptions =
 export type OctaStepWithOptions =
   | EndConversationStep
   | AssignToTeamStep
+  | OfficeHoursStep
 
 export enum OctaStepType {
   END_CONVERSATION = 'end conversation',
-  ASSIGN_TO_TEAM = 'assign to team'
+  ASSIGN_TO_TEAM = 'assign to team',
+  OFFICE_HOURS = 'office hours'
 }
 
 export type OctaStepWithOptionsType = 
@@ -28,6 +30,11 @@ export type EndConversationStep = StepBase & {
 
 export type AssignToTeamStep = StepBase & {
   type: OctaStepType.ASSIGN_TO_TEAM
+  options: AssignToTeamOptions
+}
+
+export type OfficeHoursStep = StepBase & {
+  type: OctaStepType.OFFICE_HOURS
   options: AssignToTeamOptions
 }
 
@@ -48,5 +55,9 @@ export const defaultEndConversationOptions: EndConversationOptions = {
 }
 
 export const defaultAssignToTeamOptions: EndConversationOptions = {
+  labels: { button: 'octa', placeholder: 'Type your answer...' },
+}
+
+export const defaultOfficeHoursOptions: EndConversationOptions = {
   labels: { button: 'octa', placeholder: 'Type your answer...' },
 }
