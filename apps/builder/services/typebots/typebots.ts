@@ -42,7 +42,8 @@ import {
   defaultAssignToTeamOptions,
   defaultEndConversationBubbleContent,
   OctaBubbleStepType,
-  OctaBubbleStepContent
+  OctaBubbleStepContent,
+  defaultOfficeHoursOptions
 } from 'models'
 import { Typebot } from 'models'
 import useSWR from 'swr'
@@ -294,6 +295,8 @@ const parseOctaStepOptions = (type: OctaStepType): OctaStepOptions => {
   switch (type) {
     case OctaStepType.ASSIGN_TO_TEAM:
       return defaultAssignToTeamOptions
+    case OctaStepType.OFFICE_HOURS:
+      return defaultOfficeHoursOptions
   }
 }
 

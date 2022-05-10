@@ -11,7 +11,7 @@ export type OctaBubbleStep = EndConversationStep
 export type OctaStepOptions = AssignToTeamOptions
 
 // Steps that has variables on the popup modal
-export type OctaStepWithOptions = AssignToTeamStep
+export type OctaStepWithOptions = AssignToTeamStep | OfficeHoursStep
 
 // Steps that has variables on its body
 export type OctaBubbleStepContent = EndConversationBubbleContent
@@ -22,6 +22,7 @@ export type EndConversationBubbleContent = TextBubbleContent
 // Bubble step types
 export enum OctaBubbleStepType {
   END_CONVERSATION = 'end conversation',
+  OFFICE_HOURS = 'office hours'
 }
 
 // Regular step types
@@ -65,6 +66,11 @@ export type AssignToTeamOptions = BaseOctaOptions & {
   }
 }
 
+export type OfficeHoursStep = StepBase & {
+  type: OctaStepType.OFFICE_HOURS
+  options: AssignToTeamOptions
+}
+
 export type BaseOctaOptions = {
   name: string | 'default'
   subject: string
@@ -102,3 +108,8 @@ export const defaultEndConversationBubbleContent: EndConversationBubbleContent =
     richText: [],
     plainText: '',
   }
+
+export const defaultOfficeHoursOptions: OfficeHoursOptions = {
+  labels: { button: 'octa', placeholder: 'Type your answer...' },
+}
+
