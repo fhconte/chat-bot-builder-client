@@ -1,10 +1,12 @@
 import { ButtonItem, ConditionItem } from '.'
+import { OfficeHoursStep } from './octaStep'
 
-export type Item = ButtonItem | ConditionItem
+export type Item = ButtonItem | ConditionItem | OfficeHoursStep
 
 export enum ItemType {
   BUTTON,
   CONDITION,
+  OFFICE_HOURS
 }
 
 export type ItemBase = {
@@ -18,3 +20,7 @@ export type ItemIndices = {
   stepIndex: number
   itemIndex: number
 }
+
+// export type ItemOffice = {
+//   id: string
+// }

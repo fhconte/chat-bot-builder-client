@@ -2,6 +2,7 @@ import { Item, ItemIndices, ItemType } from 'models'
 import React from 'react'
 import { ButtonNodeContent } from './contents/ButtonNodeContent'
 import { ConditionNodeContent } from './contents/ConditionNodeContent'
+import { OfficeHoursNodeContent } from './contents/OfficeHoursNodeContent'
 
 type Props = {
   item: Item
@@ -21,5 +22,7 @@ export const ItemNodeContent = ({ item, indices, isMouseOver }: Props) => {
       )
     case ItemType.CONDITION:
       return <ConditionNodeContent item={item} />
+    case ItemType.OFFICE:
+      return <OfficeHoursNodeContent item={item} />
   }
 }

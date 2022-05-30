@@ -8,7 +8,7 @@ export type OctaStep = AssignToTeamStep
 export type OctaBubbleStep = EndConversationStep
 
 // Step options (modal options) usa no OctaStep
-export type OctaStepOptions = AssignToTeamOptions
+export type OctaStepOptions = AssignToTeamOptions | OfficeHoursOptions
 
 // Steps that has variables on the popup modal
 export type OctaStepWithOptions = AssignToTeamStep | OfficeHoursStep
@@ -22,18 +22,27 @@ export type EndConversationBubbleContent = TextBubbleContent
 // Bubble step types
 export enum OctaBubbleStepType {
   END_CONVERSATION = 'end conversation',
-  OFFICE_HOURS = 'office hours'
 }
 
 // Regular step types
 export enum OctaStepType {
   ASSIGN_TO_TEAM = 'assign to team',
+  OFFICE_HOURS = 'office hours'
 }
 
 // Regular steps types that have options
 export type OctaStepWithOptionsType = EndConversationStep
 
 type OctaOptionBase = { variableId?: string }
+
+export declare enum ReturnOfficeHours {
+    EQUAL = "Equal to",
+    NOT_EQUAL = "Not equal",
+    CONTAINS = "Contains",
+    GREATER = "Greater than",
+    LESS = "Less than",
+    IS_SET = "Is set"
+}
 
 export type EndConversationStep = StepBase & {
   type: OctaBubbleStepType.END_CONVERSATION
@@ -62,6 +71,16 @@ export type AssignToTeamOptions = BaseOctaOptions & {
   isAvailable: boolean
   labels: {
     placeholder: { assignToTeam: string; connectionMessage: string }
+    button: string
+  }
+}
+
+export type OfficeHoursOptions = BaseOctaOptions & {
+  officeHours: string
+  withinTheSchedule: string
+  outOfTime: string
+  labels: {
+    placeholder: { officehours: string }
     button: string
   }
 }
@@ -110,6 +129,16 @@ export const defaultEndConversationBubbleContent: EndConversationBubbleContent =
   }
 
 export const defaultOfficeHoursOptions: OfficeHoursOptions = {
-  labels: { button: 'octa', placeholder: 'Type your answer...' },
+  officeHours: 'Qual horário de expediente esse bot vai atender?',
+  withinTheSchedule: 'Para conversas iniciadas dentro desse horário, ir para:',
+  outOfTime: 'Para conversas iniciadas fora desse horário, ir para:',
+  labels: {
+    button: 'Salvar',
+    placeholder: {
+      officehours: 'Defina um horário de atendimento',
+    },
+  },
+  name: '',
+  subject: ''
 }
 

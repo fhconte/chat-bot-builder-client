@@ -1,0 +1,5 @@
+{
+  "whatBusinessHoursBotServe": "Qual horario de expediente esse bot vai atender?",
+  "conversationsInitiatedHours": "Para conversas iniciadas dentro desse horário, ir para:",
+  "conversationsInitiatedOutsideHours": "For conversations initiated outside these hours, go to:"
+}

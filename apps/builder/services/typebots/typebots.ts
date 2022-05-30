@@ -258,7 +258,7 @@ export const parseNewStep = (
 }
 
 const parseDefaultItems = (
-  type: LogicStepType.CONDITION | InputStepType.CHOICE,
+  type: LogicStepType.CONDITION | InputStepType.CHOICE | OctaStepType.OFFICE_HOURS,
   stepId: string
 ): Item[] => {
   switch (type) {
@@ -273,6 +273,8 @@ const parseDefaultItems = (
           content: defaultConditionContent,
         },
       ]
+    case OctaStepType.OFFICE_HOURS:
+      return [{ id: cuid(), stepId, type: ItemType.BUTTON }]
   }
 }
 

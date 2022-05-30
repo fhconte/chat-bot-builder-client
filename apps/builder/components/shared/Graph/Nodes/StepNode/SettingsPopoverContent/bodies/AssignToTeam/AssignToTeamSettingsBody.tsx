@@ -89,6 +89,8 @@ export const AssignToTeamSettingsBody = ({
         <AutoAssignToSelect
           onSelect={handleDefaultAssignToChange}
           teamId={options.assignTo}
+          placeholder="Opções"
+          list={[{value:"nome", text:"Text"}, {value:"nome 2", text:"Text 2"}]}
         />
       </Stack>
       <Stack>

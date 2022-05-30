@@ -1,23 +1,32 @@
 import { Select } from '@chakra-ui/react'
+import { ValueTarget } from 'framer-motion'
 import React, { ChangeEvent } from 'react'
 
 type Props = {
   teamId?: string
   onSelect: (teamId: string) => void
+  placeholder?: string
+  list?: Array<ValueText>
 }
 
-export const AutoAssignToSelect = ({ teamId, onSelect }: Props) => {
+type ValueText = {
+  value?: string
+  text?: string
+}
+
+export const AutoAssignToSelect = ({ teamId, onSelect, placeholder, list }: Props) => {
   const handleOnChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onSelect(e.target.value)
   }
   return (
     <Select
-      placeholder="Não atribuir (Visível a todos)"
+      placeholder={placeholder}
       value={teamId}
       onChange={handleOnChange}
     >
-      <option value="1">Willian</option>
-      <option value="2">Willian 2</option>
+      {list?.map(listItem => (
+        <option key={listItem.value}> {listItem.text} </option>
+      ) )}
     </Select>
   )
 }

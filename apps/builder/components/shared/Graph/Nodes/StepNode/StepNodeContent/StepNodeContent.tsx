@@ -148,6 +148,9 @@ export const StepNodeContent = ({ step, indices }: Props) => {
         <AssignToTeamContent options={step.options.labels} />
       )
     }
+    case OctaStepType.OFFICE_HOURS: {
+      return <ItemNodesList step={step} indices={indices} isReadOnly />
+    }
     case 'start': {
       return <Text>Start</Text>
     }
