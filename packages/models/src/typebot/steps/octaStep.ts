@@ -7,8 +7,15 @@ export type OctaStep = AssignToTeamStep
 // Bubble steps (editado na árvore)
 export type OctaBubbleStep = EndConversationStep
 
+<<<<<<< HEAD
 // Step options (modal options) usa no OctaStep
 export type OctaStepOptions = AssignToTeamOptions | OfficeHoursOptions
+=======
+export type OctaStepWithOptions =
+  | EndConversationStep
+  | AssignToTeamStep
+  | OfficeHoursStep
+>>>>>>> 630c94c79baaccb14e4513e6fe7cc4b37e3de2de
 
 // Steps that has variables on the popup modal
 export type OctaStepWithOptions = AssignToTeamStep | OfficeHoursStep
@@ -22,6 +29,11 @@ export type EndConversationBubbleContent = TextBubbleContent
 // Bubble step types
 export enum OctaBubbleStepType {
   END_CONVERSATION = 'end conversation',
+<<<<<<< HEAD
+=======
+  ASSIGN_TO_TEAM = 'assign to team',
+  OFFICE_HOURS = 'office hours'
+>>>>>>> 630c94c79baaccb14e4513e6fe7cc4b37e3de2de
 }
 
 // Regular step types
@@ -54,6 +66,7 @@ export type AssignToTeamStep = StepBase & {
   options: AssignToTeamOptions
 }
 
+<<<<<<< HEAD
 export type AssignToTeamOptions = BaseOctaOptions & {
   assignTo: string
   messages: {
@@ -83,6 +96,15 @@ export type OfficeHoursOptions = BaseOctaOptions & {
     placeholder: { officehours: string }
     button: string
   }
+=======
+export type OfficeHoursStep = StepBase & {
+  type: OctaStepType.OFFICE_HOURS
+  options: AssignToTeamOptions
+}
+
+export type EndConversationOptions = OctaOptionBase & {
+  labels: { placeholder: string; button: string }
+>>>>>>> 630c94c79baaccb14e4513e6fe7cc4b37e3de2de
 }
 
 export type OfficeHoursStep = StepBase & {
@@ -142,3 +164,13 @@ export const defaultOfficeHoursOptions: OfficeHoursOptions = {
   subject: ''
 }
 
+<<<<<<< HEAD
+=======
+export const defaultAssignToTeamOptions: EndConversationOptions = {
+  labels: { button: 'octa', placeholder: 'Type your answer...' },
+}
+
+export const defaultOfficeHoursOptions: EndConversationOptions = {
+  labels: { button: 'octa', placeholder: 'Type your answer...' },
+}
+>>>>>>> 630c94c79baaccb14e4513e6fe7cc4b37e3de2de

@@ -28,6 +28,10 @@ import {
   UrlInputSettingsBody,
   DateInputSettingsBody,
   AssignToTeamSettingsBody,
+<<<<<<< HEAD
+=======
+  EndConversationSettingsBody,
+>>>>>>> 630c94c79baaccb14e4513e6fe7cc4b37e3de2de
   OfficeHoursSettingsBody
 } from './bodies'
 import { ChoiceInputSettingsBody } from './bodies/ChoiceInputSettingsBody'
@@ -219,6 +223,14 @@ export const StepSettings = ({
           options={
             step.options || { labels: { placeholder: 'sou um placeholder' } }
           }
+          onOptionsChange={handleOptionsChange}
+        />
+      )
+    }
+    case OctaStepType.OFFICE_HOURS: {
+      return (
+        <OfficeHoursSettingsBody
+          options={step.options || { labels: { placeholder: 'sou um placeholder' }} }
           onOptionsChange={handleOptionsChange}
         />
       )

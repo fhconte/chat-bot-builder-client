@@ -40,10 +40,16 @@ import {
   OctaStepOptions,
   OctaStepType,
   defaultAssignToTeamOptions,
+<<<<<<< HEAD
   defaultEndConversationBubbleContent,
   OctaBubbleStepType,
   OctaBubbleStepContent,
   defaultOfficeHoursOptions
+=======
+  defaultEndConversationOptions,
+  defaultOfficeHoursOptions
+
+>>>>>>> 630c94c79baaccb14e4513e6fe7cc4b37e3de2de
 } from 'models'
 import { Typebot } from 'models'
 import useSWR from 'swr'
@@ -297,6 +303,11 @@ const parseOctaStepOptions = (type: OctaStepType): OctaStepOptions => {
   switch (type) {
     case OctaStepType.ASSIGN_TO_TEAM:
       return defaultAssignToTeamOptions
+<<<<<<< HEAD
+=======
+    case OctaStepType.END_CONVERSATION:
+      return defaultEndConversationOptions
+>>>>>>> 630c94c79baaccb14e4513e6fe7cc4b37e3de2de
     case OctaStepType.OFFICE_HOURS:
       return defaultOfficeHoursOptions
   }
