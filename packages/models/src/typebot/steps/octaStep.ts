@@ -2,16 +2,16 @@ import { StepBase, StepWithItems, ItemBase, Step, ItemType } from '.'
 import { TextBubbleContent } from './bubble'
 
 // Regular steps
-export type OctaStep = AssignToTeamStep | OfficeHourStep
+export type OctaStep = AssignToTeamStep | OfficeHourStep | PreReserveStep
 
 // Bubble steps (editado na árvore)
 export type OctaBubbleStep = EndConversationStep
 
 // Step options (modal options) usa no OctaStep
-export type OctaStepOptions = AssignToTeamOptions | OfficeHoursOptions
+export type OctaStepOptions = AssignToTeamOptions | OfficeHoursOptions | PreReserveOptions
 
 // Steps that has variables on the popup modal
-export type OctaStepWithOptions = AssignToTeamStep | OfficeHourStep
+export type OctaStepWithOptions = AssignToTeamStep | OfficeHourStep | PreReserveStep
 
 // Steps that has variables on its body
 export type OctaBubbleStepContent = EndConversationBubbleContent
@@ -27,7 +27,8 @@ export enum OctaBubbleStepType {
 // Regular step types
 export enum OctaStepType {
   OFFICE_HOURS = 'office hours',
-  ASSIGN_TO_TEAM = 'assign to team'
+  ASSIGN_TO_TEAM = 'assign to team',
+  PRE_RESERVE = 'pre reserve'
 }
 
 // Regular steps types that have options
@@ -61,6 +62,11 @@ export type OfficeHoursItem = ItemBase & {
   content: OfficeHoursContent
 }
 
+export type PreReserveStep = StepBase & {
+  type: OctaStepType.PRE_RESERVE
+  options: PreReserveOptions
+}
+
 export type OfficeHoursContent = {
   source: string;
   matchType: "$eq";
@@ -69,26 +75,6 @@ export type OfficeHoursContent = {
   referenceValue: null;
   subType: null;
 }
-
-// export type OfficeHoursContent = {
-//   source: "CURRENT_SESSION";
-//   matchType: "$eq";
-//   values: Array<string>,
-//   referenceProperty: string;
-//   referenceValue: null;
-//   subType: null;
-// }
-
-// export type OfficeHoursItem = ItemBase & {
-//   type: ItemType.OFFICE_HOURS;
-//   content: Array<OfficeHoursContent>;
-// }
-
-// export type OfficeHourStep = StepBase & {
-//   type: OctaStepType.OFFICE_HOURS;
-//   options: OfficeHoursOptions;
-//   items: [OfficeHoursItem]
-// }
 
 export type OfficeHoursOptions = BaseOctaOptions & {
   id: string;
@@ -140,6 +126,58 @@ export type AssignToTeamOptions = BaseOctaOptions & {
     placeholder: { assignToTeam: string; connectionMessage: string }
     button: string
   }
+}
+
+export type PreReserveOptions = BaseOctaOptions & { 
+  id: string,
+  presetName: string,
+  displayName: string,
+  type: string,
+  warning: boolean,
+  isOnTree: boolean,
+  content: ContentPrereserve
+}
+
+export type ContentPrereserve = {
+  id: string;
+  // applicableFor: [],
+  // warnings: [],
+  // delay: {
+  //   time: 0,
+  //   style: typing
+  // },
+  // messages: [],
+  // referenceProperty: @GROUP,
+  // referenceValue: 63e1503814973d001c899069,
+  // subType: null,
+  // successMessageContent: {
+  //   applicableFor: [],
+  //   warnings: [],
+  //   delay: {
+  //       time: 0,
+  //       style: typing
+  //   },
+  //   messages: []
+  // },
+  // fallbackMessageContent: {
+  //   applicableFor: [],
+  //   warnings: [],
+  //   delay: {
+  //       time: 0,
+  //       style: typing
+  //   },
+  //   messages: []
+  // },
+  // afterAssignMessageContent: {
+  //   applicableFor: [],
+  //   warnings: [],
+  //   delay: {
+  //       time: 0,
+  //       style: typing
+  //   },
+  //   messages: []
+  // },
+  // mustHasAvailability: true
 }
 
 export type Assign = {
@@ -217,6 +255,18 @@ export const defaultAssignToTeamOptions: AssignToTeamOptions = {
   assignTo: '',
   assignType: '',
   isAvailable: false,
+}
+
+export const defaultPreReserveOptions: PreReserveOptions =  {
+  id: '3456',
+  name: '',
+  subject: '',
+  presetName: 'pre-reserve',
+  displayName: 'Reservar conversa para um grupo',
+  type: 'pre-reserve',
+  warning: false,
+  isOnTree: true,
+  content: { id: '123'}
 }
 
 export const defaultEndConversationBubbleContent: EndConversationBubbleContent =
