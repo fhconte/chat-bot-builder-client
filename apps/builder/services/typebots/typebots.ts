@@ -404,6 +404,7 @@ const parseOctaStepOptions = (type: OctaStepType): OctaStepOptions | null => {
       return defaultAssignToTeamOptions
     case OctaStepType.OFFICE_HOURS:
       return defaultOfficeHoursOptions
+    case OctaStepType.
     default:
       return null
   }

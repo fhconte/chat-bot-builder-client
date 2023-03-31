@@ -40,6 +40,7 @@ import {
   OctaStepOptions,
   OctaStepType,
   defaultAssignToTeamOptions,
+  defaultPreReserveOptions,
   defaultEndConversationBubbleContent,
   OctaBubbleStepType,
   OctaBubbleStepContent,
@@ -351,6 +352,8 @@ const parseOctaStepOptions = (type: OctaStepType): OctaStepOptions | null => {
       return null
   }
 }
+
+const parsePreReserveOptions = () => {}
 
 const parseDefaultStepOptions = (type: StepWithOptionsType): StepOptions | null => {
   switch (type) {

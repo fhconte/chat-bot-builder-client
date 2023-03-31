@@ -45,7 +45,7 @@ import { SwitchWithLabel } from 'components/shared/SwitchWithLabel'
 import { ExternalLinkIcon } from 'assets/icons'
 import { sendOctaRequest } from 'util/octaRequest'
 import { debug } from 'console'
-// import { validateUrl } from 'utils'
+import { validateUrl } from 'utils'
 
 enum HttpMethodsWebhook {
   POST = "POST",
@@ -72,11 +72,13 @@ export const WebhookSettings = ({
     status: 'error',
   })
 
-  const handleUrlChange = (url?: string) =>{
+  const handleUrlChange = (url: string) =>{
     // validateUrl
     // && url.length > 5 && validateUrl(url)
     if(step.options.url != url) clearOptions()
-    if (url && url.length > 5) {
+    // const validUrl = validateUrl(url ? url : '')
+    console.log(validateUrl(url))
+    if (url && url?.length > 5 && validateUrl(url)) {
       const newUrl = new URL(url.replace(/ /g, '').trim())
       url = newUrl.origin
       
@@ -218,7 +220,8 @@ export const WebhookSettings = ({
     <Stack spacing={4}>
       <Input
         placeholder="Digite o endereço da API ou do sistema"
-        defaultValue={step.options.url}
+        // {selected && selected.label ? selected.label : ""}
+        value={step.options.url}
         onChange={handleUrlChange}
         debounceTimeout={0}
       />
