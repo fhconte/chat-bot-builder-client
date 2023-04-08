@@ -123,6 +123,10 @@ const hisNameComponents = (step: DraggableStep | DraggableStepType) => {
         return 'Horário de atendimento'
     case WabaStepType.COMMERCE:
       return 'Commerce'
+    case WabaStepType.BUTTONS:
+      return 'Pergunta com botões interativos'
+    case WabaStepType.OPTIONS:
+      return 'Pergunta com lista de opções'
     default:
       return 'Outro'
   }

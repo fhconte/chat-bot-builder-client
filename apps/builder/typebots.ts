@@ -45,7 +45,8 @@ import {
   OctaBubbleStepType,
   OctaBubbleStepContent,
   defaultPaymentInputOptions,
-  defaultRequestOptions,
+  defaultButtonsWabaContent,
+  defaultOptionsWabaContent,
   defaultRequestButtons
 } from 'models'
 import { Typebot } from 'models'
@@ -337,10 +338,6 @@ const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType | WabaSte
       return defaultEmbedBubbleContent
     case OctaBubbleStepType.END_CONVERSATION:
       return defaultEndConversationBubbleContent
-    case WabaStepType.BUTTONS:
-      return defaultRequestButtons
-    case WabaStepType.OPTIONS:
-      return defaultRequestOptions
   }
 }
 

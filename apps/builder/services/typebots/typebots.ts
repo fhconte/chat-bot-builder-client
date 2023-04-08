@@ -46,6 +46,8 @@ import {
   defaultRequestButtons,
   OfficeHourStep,
   defaultOfficeHoursOptions,
+  defaultOptionsWabaContent,
+  defaultButtonsWabaContent
 } from 'models'
 import { Typebot } from 'models'
 import useSWR from 'swr'

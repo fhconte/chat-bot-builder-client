@@ -21,6 +21,8 @@ import {
   OctaStepType,
   WebhookStep,
   IntegrationStepType,
+  WabaStep,
+  WabaStepType
 } from 'models'
 import { useGraph } from 'contexts/GraphContext'
 import { StepIcon } from 'components/editor/StepsSideBar/StepIcon'
@@ -155,7 +157,7 @@ export const StepNode = ({
   }, [openedStepId])
 
   const checkisConnectable = (step: Step): boolean  => {
-    return !isEndConversationStep(step) && !isAssignToTeamStep(step) && hasDefaultConnector(step) && !isOfficeHoursStep(step) && !isWebhookStep(step);
+    return !isEndConversationStep(step) && !isAssignToTeamStep(step) && hasDefaultConnector(step) && !isOfficeHoursStep(step) && !isWebhookStep(step) && !isWabaStep(step)
   }
 
   return isEditing && (isTextBubbleStep(step) || isOctaBubbleStep(step)) ? (
@@ -319,6 +321,12 @@ const isWebhookStep = (
   step: Step,
 ): step is WebhookStep => {
   return step.type === IntegrationStepType.WEBHOOK
+}
+
+const isWabaStep = (
+  step: Step,
+): step is WabaStep => {
+  return step.type === WabaStepType.BUTTONS || step.type === WabaStepType.OPTIONS
 }
 
 const hasStepRedirectNoneAvailable = (step: Step): step is AssignToTeamStep => {

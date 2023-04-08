@@ -13,12 +13,6 @@ export const WebhookContent = (
     step,
     indices: { blockIndex, stepIndex }
   }: Props) => {
-
-  // {typebot?.blocks[blockIndex].steps[stepIndex].options['name']} //bloco no typebot
-
-  // const { webhooks } = useTypebot()
-  // const webhook = webhooks.find(byId(webhookId))
-
   return (
     <Text color="gray.500">Configuração...</Text>
   )

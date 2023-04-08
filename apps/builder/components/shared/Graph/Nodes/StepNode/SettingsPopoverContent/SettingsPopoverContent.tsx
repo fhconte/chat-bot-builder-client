@@ -46,6 +46,7 @@ import { SetVariableSettings } from './bodies/SetVariableSettings'
 import { TypebotLinkSettingsForm } from './bodies/TypebotLinkSettingsForm'
 import { WebhookSettings } from './bodies/WebhookSettings'
 import { ZapierSettings } from './bodies/ZapierSettings'
+import { OctaWabaBody } from './bodies/OctaWabaBody'
 
 type Props = {
   step: Exclude<Step, TextBubbleStep>
@@ -263,6 +264,16 @@ export const StepSettings = ({
     case IntegrationStepType.WEBHOOK: {
       return (
         <WebhookSettings step={step} onOptionsChange={handleOptionsChange} />
+      )
+    }
+    case WabaStepType.BUTTONS: {
+      return (
+        <OctaWabaBody step={step} onOptionsChange={handleOptionsChange} />
+      )
+    }
+    case WabaStepType.OPTIONS: {
+      return (
+        <OctaWabaBody step={step} onOptionsChange={handleOptionsChange} />
       )
     }
     default: {

@@ -137,10 +137,6 @@ export const WebhookSettings = ({
       parameters
     })
   }
-//     onOptionsChange({
-//       ...step.options,
-//       parameters: [...step.options.parameters, ...parameters] as QueryParameters[]
-//     })
 
 
   const handleHeadersChange = (headers: QueryParameters[]) => {
