@@ -27,7 +27,7 @@ import { ImageBubbleContent } from '../contents/ImageBubbleContent'
 import { OctaCommerceContent } from '../contents/OctaCommerceContent'
 
 // import { PaymentInputContent } from './contents/PaymentInputContent'
-import { ButtonsOptionsContent } from '../contents/ButtonsOptions/ButtonsOptionsContent'
+import { ButtonsOptionsContent } from '../contents/ButtonsOptions'
 import { PlaceholderContent } from '../contents/PlaceholderContent'
 // import { SendEmailContent } from './contents/SendEmailContent'
 // import { TypebotLinkContent } from './contents/TypebotLinkContent'
@@ -172,10 +172,10 @@ export const StepNodeContent = ({ step, indices }: Props) => {
       return <OctaCommerceContent step={step} options={step} />
     }
     case WabaStepType.BUTTONS: {
-      return <ButtonsOptionsContent step={step} />
+      return <ButtonsOptionsContent step={step} options={step} />
     }
     case WabaStepType.OPTIONS: {
-      return <ButtonsOptionsContent step={step} />
+      return <ButtonsOptionsContent step={step}  options={step}/>
     }
     case 'start': {
       return <Text>Início</Text>

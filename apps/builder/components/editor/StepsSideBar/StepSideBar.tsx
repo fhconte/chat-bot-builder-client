@@ -95,10 +95,7 @@ export const StepsSideBar = () => {
   }
 
   const shouldDisableComponent = (type: StepType) => {
-    // debugger
     return (
-      // type === InputStepType.DATE ||
-      // type === InputStepType.PHONE ||
       (type === OctaStepType.OFFICE_HOURS && verifyFeatureToggle('whatsapp-api'))||
       type === WabaStepType.BUTTONS && verifyFeatureToggle('whatsapp') ||
       type === WabaStepType.OPTIONS && verifyFeatureToggle('whatsapp')

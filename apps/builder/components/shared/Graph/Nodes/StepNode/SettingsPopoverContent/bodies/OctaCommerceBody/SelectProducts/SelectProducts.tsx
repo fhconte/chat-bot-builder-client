@@ -4,6 +4,7 @@ import { MdOutlineChevronRight } from 'react-icons/md'
 import { ProductType } from 'services/octadesk/commerce/commerce.type'
 import { Title } from '../OctaCommerceBody.style'
 import { Container, ListProducts, ProductItem, TitleProduct, ImageProduct, ProductContainer, Price, Destination, CustomVariation, ProductVariation, TitleVariation, ContainerVariation, VariationArea, VariationControl, VariationLabel, VariationOption, Instructions } from './SelectProducts.style'
+import Image from 'next/image'
 
 type Props = {
   products: Array<ProductType>;
@@ -29,6 +30,10 @@ const SelectProducts = ({ products, onSelect }: Props) => {
     onSelect(product);
   }
 
+  const handleTemp = (temp: any) => {
+    console.log('temp', temp)
+  }
+
   return (
     <>
       <Instructions>
@@ -44,7 +49,8 @@ const SelectProducts = ({ products, onSelect }: Props) => {
                   <>
                     <ProductItem key={product.id}>
                       <ImageProduct>
-                        {product && product.imageUrl && <img src={product.imageUrl} alt={product.name} />}
+                        {product && product.imageUrl &&
+                         <Image src={product.imageUrl} alt={product.name} />}
                       </ImageProduct>
                       <ProductContainer>
                         <TitleProduct>{product.name}</TitleProduct>
@@ -74,7 +80,7 @@ const SelectProducts = ({ products, onSelect }: Props) => {
               <>
                 <ProductVariation>
                   <ImageProduct>
-                    {variationProduct && variationProduct.imageUrl && <img src={variationProduct.imageUrl} alt={variationProduct.name} />}
+                    {variationProduct && variationProduct.imageUrl && <Image src={variationProduct.imageUrl} alt={variationProduct.name} />}
                   </ImageProduct>
                   <ProductContainer>
                     <TitleProduct>{variationProduct.name}</TitleProduct>
@@ -86,10 +92,10 @@ const SelectProducts = ({ products, onSelect }: Props) => {
                 </ProductVariation>
                 <VariationArea>
                   {variationProduct.attributes.map(variation => (
-                    <VariationControl>
+                    <VariationControl key={variation.name}>
                       <VariationLabel>{variation.name}</VariationLabel>
                       <VariationOption>
-                        <OctaSelect placeholder={`Selecione um(a) ${variation.name.toLocaleLowerCase()}`} options={variation.values.map(value => ({ label: value.value, value: value.id }))}  />
+                        <OctaSelect placeholder={`Selecione um(a) ${variation.name.toLocaleLowerCase()}`} options={variation.values.map(value => ({ label: value.value, value: value.id }))} onChange={() => handleTemp(variation)} />
                       </VariationOption>
                     </VariationControl>
                   ))}

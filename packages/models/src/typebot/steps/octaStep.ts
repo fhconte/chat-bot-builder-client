@@ -19,6 +19,7 @@ export type OctaBubbleStepContent = EndConversationBubbleContent
 // End conversation bubble content
 export type EndConversationBubbleContent = TextBubbleContent
 
+
 // Bubble step types
 export enum OctaBubbleStepType {
   END_CONVERSATION = 'end conversation',

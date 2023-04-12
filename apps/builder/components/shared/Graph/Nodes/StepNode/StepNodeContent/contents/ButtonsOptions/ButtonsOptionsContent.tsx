@@ -1,18 +1,27 @@
-import { Text } from '@chakra-ui/react'
-import { WabaStep } from 'models'
+import { FormLabel, Stack } from '@chakra-ui/react'
+import { WabaStep, StepIndices, TextBubbleContent, OptionsWabaContent } from 'models'
+import { TextBubbleEditor } from '../../../TextBubbleEditor'
 
 
 type Props = {
-  step: WabaStep
+  step: WabaStep,
+  options: OptionsWabaContent,
+  onOptionsChange: (options: OptionsWabaContent) => void
 }
 
-export const ButtonsOptionsContent = (
-  { step }: Props) => {
-    console.log('OK', step)
+// type wabaSettingsBodyProps = {
+//   options: OptionsWabaContent
+//   onOptionsChange: (options: OptionsWabaContent) => void
+// }
+
+const ButtonsOptionsContent = (
+  { step, options}: Props) => {
     
-  return (
-    <Text color="gray.500">Pergunta com lista de opções</Text>
-  )
+    return (
+      <text>{step.type === "options" ? ("Pergunta com lista de opções") : ("Pergunta com botões interativos") }</text>
+      
+    )
 }
 
 
+export default ButtonsOptionsContent
