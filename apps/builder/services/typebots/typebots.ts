@@ -20,34 +20,25 @@ import {
   defaultTextInputOptions,
   defaultNumberInputOptions,
   defaultEmailInputOptions,
+  defaultButtonsWabaOptions,
+  defaultOptionsWabaOptions,
   defaultCpfInputOptions,
   defaultDateInputOptions,
   defaultPhoneInputOptions,
-  defaultUrlInputOptions,
   defaultChoiceInputOptions,
-  defaultAskNameOptions,
-  defaultSetVariablesOptions,
-  defaultRedirectOptions,
-  defaultCodeOptions,
   defaultWebhookOptions,
   StepWithOptionsType,
   Item,
   ItemType,
   defaultConditionContent,
   defaultEmbedBubbleContent,
-  ChoiceInputStep,
-  ConditionStep,
   OctaStepOptions,
   OctaStepType,
   defaultAssignToTeamOptions,
   defaultEndConversationBubbleContent,
   OctaBubbleStepType,
-  defaultRequestOptions,
-  defaultRequestButtons,
-  OfficeHourStep,
   defaultOfficeHoursOptions,
-  defaultOptionsWabaContent,
-  defaultButtonsWabaContent
+  WabaStepOptions,
 } from 'models'
 import { Typebot } from 'models'
 import useSWR from 'swr'
@@ -57,23 +48,16 @@ import {
   isOctaBubbleStepType,
   isOctaStepType,
   isNotEmpty,
-  isWebhookStep,
   omit,
-  stepHasItems,
   stepTypeHasItems,
   stepTypeHasOption,
-  stepTypeHasWebhook,
 } from 'utils'
 import { dequal } from 'dequal'
 import { stringify } from 'qs'
-import { isChoiceInput, isConditionStep, sendRequest, isOctaBubbleStep } from 'utils'
+import { isChoiceInput, isConditionStep, sendRequest } from 'utils'
 import cuid from 'cuid'
 import { diff } from 'deep-object-diff'
-import { duplicateWebhook } from 'services/webhook'
-import { Plan } from 'model'
-import { isDefined } from '@chakra-ui/utils'
-import { headers, services, subDomain } from '@octadesk-tech/services'
-import { config } from 'config/octadesk.config'
+import { subDomain } from '@octadesk-tech/services'
 import { sendOctaRequest } from 'util/octaRequest'
 
 export type TypebotInDashboard = Pick<
@@ -244,11 +228,11 @@ export const createTypebot = async ({
 //   }
 // }
 
-const generateOldNewIdsMapping = (itemWithId: { id: string }[]) => {
-  const idsMapping: Map<string, string> = new Map()
-  itemWithId.forEach((item) => idsMapping.set(item.id, cuid()))
-  return idsMapping
-}
+// const generateOldNewIdsMapping = (itemWithId: { id: string }[]) => {
+//   const idsMapping: Map<string, string> = new Map()
+//   itemWithId.forEach((item) => idsMapping.set(item.id, cuid()))
+//   return idsMapping
+// }
 
 export const getTypebot = async (typebotId: string) => {
   const { data } = useSWR<
@@ -381,7 +365,7 @@ const parseDefaultItems = (
   }
 }
 
-const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType | WabaStepType): BubbleStepContent => {
+const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType | WabaStepType): BubbleStepContent | undefined => {
   switch (type) {
     case BubbleStepType.TEXT:
       return defaultTextBubbleContent
@@ -393,22 +377,21 @@ const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType | WabaSte
       return defaultEmbedBubbleContent
     case OctaBubbleStepType.END_CONVERSATION:
       return defaultEndConversationBubbleContent
-    case WabaStepType.BUTTONS:
-      return defaultRequestButtons
-    case WabaStepType.OPTIONS:
-      return defaultRequestOptions
   }
 }
 
-const parseOctaStepOptions = (type: OctaStepType): OctaStepOptions | null => {
+const parseOctaStepOptions = (type: OctaStepType | WabaStepType): OctaStepOptions | WabaStepOptions | null => {
   switch (type) {
     case OctaStepType.ASSIGN_TO_TEAM:
       return defaultAssignToTeamOptions
     case OctaStepType.OFFICE_HOURS:
       return defaultOfficeHoursOptions
-    case OctaStepType.
+    case WabaStepType.BUTTONS: 
+      return defaultButtonsWabaOptions 
+    case WabaStepType.OPTIONS:
+      return defaultOptionsWabaOptions
     default:
-      return null
+       return null
   }
 }
 

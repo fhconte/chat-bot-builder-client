@@ -1,4 +1,8 @@
-import { StepBase, OctaProperty } from '.'
+import { TElement } from '@udecode/plate-core';
+import { StepBase} from '.'
+import { Variable } from '../variable';
+import { TextBubbleContent } from './bubble'
+
 
 export type WabaStep =
   | OptionsWabaStep
@@ -6,211 +10,236 @@ export type WabaStep =
   | OctaCommerceStep
 
 export enum WabaStepType {
-    OPTIONS = 'options',
-    BUTTONS = 'buttons',
-    COMMERCE = 'commerce'
-  }
+  OPTIONS = 'options',
+  BUTTONS = 'buttons',
+  COMMERCE = 'commerce'
+}
+
+export type WabaStepOptions = 
+  | OptionsWabaOptions
+  | ButtonsWabaOptions
 
 export type WabaStepContent =
-  | OptionsWabaContent
-  | ButtonsWabaContent
+  // | OptionsWabaContent
+  // | ButtonsWabaContent
   | OctaCommerceStep
 
 
 export type OptionsWabaStep = StepBase & {
   type: WabaStepType.OPTIONS
-  content: OptionsWabaContent
+  options: OptionsWabaOptions
 }
 
 export type ButtonsWabaStep = StepBase & {
   type: WabaStepType.BUTTONS
-  content: ButtonsWabaContent
+  options: ButtonsWabaOptions
 }
 
-export type OctaCommerceStep = StepBase & {
+export type OctaCommerceStep = StepBase &  {
   type: WabaStepType.COMMERCE
   content: OctaCommerceContent
 }
 
-export type BaseOctaOptionsWaba = {
-  id: string;
-  presetName: string;
-  displayName: string;
-  type: string;
-}
+
 
 export type OctaCommerceContent = StepBase & {
   catalogId: string;
   products: Array<String>;
 }
-export type BaseButtonsOptionsWaba = {
+
+export type ButtonsOptionsWaba = {
   id: string;
   value: string;
   label: string;
-  selected: boolean | undefined;
+  selected?: boolean | undefined;
   description: string
 }
 
 export type MessagesWaba = {
-  message: string;
-  options: Array<any>;
+  message?: TextBubbleContent;
+  options?: Array<ButtonsOptionsWaba>;
 }
 
-export type OptionsWabaContent = BaseOctaOptionsWaba & {
+type ListWaba = {
+  actionLabel: string;
+  sections: Array<MessagesWaba>
+}
+
+export type validationMessages = {
+  id: string,
+  level: number,
+  message: string
+}
+
+type BaseOctaOptionsWaba = {
+  id: string;
+  presetName: string;
+  displayName: string;
+  type: string;
+  isOnTree?: boolean;
+  warning: boolean; 
+}
+
+export type OptionsWabaOptions = BaseOctaOptionsWaba & {
   content: {
+    allowInteractiveMessage: boolean;
+    allowUserInput: boolean;
     applicableFor: Array<any>;
-    warnings: Array<any>;
+    body?:  MessagesWaba;
+    buttons: Array<ButtonsOptionsWaba>;
     delay: {
       time: number,
       style: string
     };
+    delayContent: {
+      time: number,
+      style: string
+    };
+    footer?: MessagesWaba;
+    header?: MessagesWaba;
+    list: Array<ListWaba>
     messages: Array<any>;
     subType: string;
-    body:  MessagesWaba| undefined
-    header: MessagesWaba | undefined;
-    footer: MessagesWaba | undefined;
-    prompt: string;
-    buttons: Array<BaseButtonsOptionsWaba>;
-    list: {
-      actionLabel: string;
-      sections: Array<{
-        message: string,
-        options: Array<BaseButtonsOptionsWaba>;
-      }> | undefined
-    
-    },
+    property?: Variable;
+    referenceProperty?: string;
+    referenceValue?: string;
+    setPropertyValue?: Object;
     validationMessage: string;
-    validationMessages: Array<any> | string;
-    allowInteractiveMessage: boolean;
-    property?: Array<OctaProperty>
-  },
-  warning: boolean;
-  isOnTree: boolean;
+    validationMessages: Array<validationMessages>;
+    warnings: Array<any>;
+  }
 }
 
-
-
-export type ButtonsWabaContent = BaseOctaOptionsWaba & {
+export type ButtonsWabaOptions = BaseOctaOptionsWaba & {
   content: {
+    allowInteractiveMessage: boolean;
+    allowUserInput: boolean;
     applicableFor: Array<any>;
-    warnings: Array<any>;
+    body: MessagesWaba
+    buttons: Array<ButtonsOptionsWaba>;
     delay: {
       time: number,
       style: string
     };
-    messages: Array<any> | string;
+    delayContent: {
+      time: number,
+      style: string
+    };
+    footer: MessagesWaba;
+    header: MessagesWaba;
+    messages: Array<any>;
+    warnings: Array<any>;
     subType: string;
-    body: {
-      
-    }
-    prompt: string;
-    header: Array<any> | undefined;
-    footer: Array<any> | undefined;
-    buttons: Array<BaseButtonsOptionsWaba>;
-    list: {
-      actionLabel: string;
-      sections: Array<{
-        message: string,
-        options: Array<BaseButtonsOptionsWaba>;
-      }> | undefined
-    
-    },
-    validationMessage?: string;
-    validationMessages: Array<any> | string;
-    allowInteractiveMessage: boolean;
-    property?: Array<OctaProperty>
-  },
-  warning: boolean;
-  isOnTree: boolean;
+    validationMessage: string;
+    validationMessages: Array<validationMessages>;
+    referenceProperty: string;
+    referenceValue: string;
+    setPropertyValue: Object;
+  }
 }
 
-export const defaultOptionsWabaContent: OptionsWabaContent = {
+export const defaultOptionsWabaOptions: OptionsWabaOptions = {
   id: "",
   presetName: "question-interactive-list",
   displayName: "Pergunta com lista de opções",
   type: "quick-reply",
+  isOnTree: true,
+  warning: false, 
   content: {
+    allowInteractiveMessage: true,
+    allowUserInput: true,
     applicableFor: [],
-    warnings: [],
+    buttons: [],
     delay: {
       time: 500,
       style: "typing"
     },
+    delayContent: {
+      time: 500,
+      style: "typing"
+    },
+    list: [],
     messages: [],
     subType: "interactive-list",
-    body: {
-      message: "",
-      options: []
-    },
-    prompt: "",
-    header: undefined,
-    footer: undefined,
-    buttons: [],
-    list: {
-      actionLabel: "",
-      sections: [{
-        message: "",
-        options: [
-          {
-            id: '',
-            label: '',
-            value: '',
-            description: '',
-            selected: undefined
-          }
-        ],
-
-      }]    
-    },
     validationMessage: "",
-    validationMessages: [],
-    allowInteractiveMessage: true
-  },
-  warning: false,
-  isOnTree: true
+    validationMessages: [
+      {
+          id: "ab2e8e89-22da-4253-b527-6683f903afff",
+          level: 0,
+          message: " Hmmm, isso não se parece com uma data. Por favor, digite somente números e barras (/), por exemplo, <strong>07/02/2014</strong> para 7 de fevereiro de 2014."
+      },
+      {
+          id: "e062b1cb-c8dc-4753-837e-b63f3dbe26f6",
+          level: 1,
+          message: "Desculpe, eu ainda não entendi. Usando apenas números e barras (/) sem espaços, digite uma data com dia, mês e ano. Por exemplo: digite <strong>29/08/1976</strong>, para 29 de agosto de 1976.<br/>Ah, essa data é só um exemplo, tá?"
+      },
+      {
+          id: "924e7273-96a3-4979-85cd-ade043cb5f64",
+          level: 2,
+          message: "Ainda não consegui entender, mas fique tranquilo que vou chamar alguém pra te ajudar. Você será atendido o mais breve possível."
+      }
+    ],
+    referenceProperty: "@GROUP",
+    referenceValue: "",
+    setPropertyValue: [],
+    warnings: []
+  }
 }
 
-export const defaultButtonsWabaContent: ButtonsWabaContent = {
+export const defaultButtonsWabaOptions: ButtonsWabaOptions = {
   id: "",
-  presetName: "question-interactive-list",
-  displayName: "Pergunta com lista de opções",
+  presetName: "question-interactive-multiple-choices",
+  displayName: "Pergunta com botões interativos",
   type: "quick-reply",
   content: {
+    allowInteractiveMessage: true,
+    allowUserInput: false,
     applicableFor: [],
-    warnings: [],
+    body: {
+      message: undefined,
+      options: []
+    },
+    header: {
+      message: undefined,
+      options: []
+    },
+    footer: {
+      message: undefined,
+      options: []
+    },
+    buttons: [],
     delay: {
       time: 500,
       style: "typing"
     },
+    delayContent: {
+      time: 500,
+      style: "typing"
+    },
+    warnings: [],
     messages: [],
-    subType: "interactive-list",
-    body: {
-      message: "",
-      options: []
-    },
-    prompt: "",
-    header: undefined,
-    footer: undefined,
-    buttons: [],
-    list: {
-      actionLabel: "",
-      sections: [{
-        message: "",
-        options: [
-          {
-            id: '',
-            label: '',
-            value: '',
-            description: '',
-            selected: undefined
-          }
-        ],
-
-      }]    
-    },
+    subType: "interactive-buttons",
+    referenceProperty: "",
+    referenceValue: "",
+    setPropertyValue: {},
     validationMessage: "",
-    validationMessages: [],
-    allowInteractiveMessage: true
+    validationMessages: [
+      {
+          id: "ab2e8e89-22da-4253-b527-6683f903afff",
+          level: 0,
+          message: " Hmmm, isso não se parece com uma data. Por favor, digite somente números e barras (/), por exemplo, <strong>07/02/2014</strong> para 7 de fevereiro de 2014."
+      },
+      {
+          id: "e062b1cb-c8dc-4753-837e-b63f3dbe26f6",
+          level: 1,
+          message: "Desculpe, eu ainda não entendi. Usando apenas números e barras (/) sem espaços, digite uma data com dia, mês e ano. Por exemplo: digite <strong>29/08/1976</strong>, para 29 de agosto de 1976.<br/>Ah, essa data é só um exemplo, tá?"
+      },
+      {
+          id: "924e7273-96a3-4979-85cd-ade043cb5f64",
+          level: 2,
+          message: "Ainda não consegui entender, mas fique tranquilo que vou chamar alguém pra te ajudar. Você será atendido o mais breve possível."
+      }
+    ],
   },
   warning: false,
   isOnTree: true

@@ -143,6 +143,29 @@ export type AssignToTeamOptions = BaseOctaOptions & {
   }
 }
 
+export type WabaOptions = BaseOctaOptions & {
+  assignTo: string
+  assignType: string
+  messages: {
+    firstMessage?: {
+      content?: TextBubbleContent
+    }
+    connectionSuccess?: {
+      content?: TextBubbleContent
+    }
+    noAgentAvailable?: {
+      content?: TextBubbleContent
+    }
+  }
+  defaultArray: string
+  isAvailable: boolean
+  shouldRedirectNoneAvailable: boolean
+  labels: {
+    placeholder: { assignToTeam: string; connectionMessage: string }
+    button: string
+  }
+}
+
 export type Assign = {
   id: string
   variableId?: string

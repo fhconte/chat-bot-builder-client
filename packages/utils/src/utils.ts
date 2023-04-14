@@ -21,7 +21,8 @@ import {
   OctaBubbleStepType,
   OctaBubbleStep,
   OctaStepWithOptionsType,
-  OfficeHourStep
+  OfficeHourStep,
+  WabaStepType
 } from 'models'
 
 export const sendRequest = async <ResponseData>(
@@ -122,7 +123,7 @@ export const isOctaBubbleStepType = (type: StepType): type is OctaBubbleStepType
 
 // export const hasRedirectWhenNoneAvailable = (step: Step): step is OctaBubbleStepType =>
 
-export const isOctaStepType = (type: StepType): type is OctaStepType =>
+export const isOctaStepType = (type: StepType): type is OctaStepType | WabaStepType =>
   (Object.values(OctaStepType) as string[]).includes(type)
 
 export const stepTypeHasOption = (

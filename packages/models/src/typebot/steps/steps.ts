@@ -4,6 +4,7 @@ import {
   IntegrationStepType,
   Item,
   LogicStepOptions,
+  WabaStepOptions
 } from '.'
 import { BubbleStep, BubbleStepType } from './bubble'
 import { AskNameInputStep, InputStep, InputStepType } from './inputs'
@@ -48,18 +49,21 @@ export type StepWithOptions =
   | InputStep
   | Exclude<LogicStep, ConditionStep>
   | IntegrationStep
+  | WabaStep
 
 export type StepWithOptionsType =
   | InputStepType
   | Exclude<LogicStepType, LogicStepType.CONDITION>
   | Exclude<IntegrationStepType, IntegrationStepType.WEBHOOK>
   | IntegrationStepType
+  | WabaStepType
 
 export type StepOptions =
   | InputStepOptions
   | LogicStepOptions
   | IntegrationStepOptions
   | OctaCommerceOptions
+  | WabaStepOptions
 
 export type StepWithItems = Omit<Step, 'items'> & { items: Item[] }
 

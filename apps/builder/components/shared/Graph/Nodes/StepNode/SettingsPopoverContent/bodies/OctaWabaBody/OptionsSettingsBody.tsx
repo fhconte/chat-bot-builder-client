@@ -11,26 +11,34 @@ import {
 import OctaButton from 'components/octaComponents/OctaButton/OctaButton'
 import { Input } from 'components/shared/Textbox'
 import { VariableSearchInput } from 'components/shared/VariableSearchInput/VariableSearchInput'
-import { WabaStepContent, Variable } from 'models'
+import { StepOptions, WabaStepContent, WabaStepOptions, OptionsWabaOptions, ButtonsWabaOptions } from 'models'
 import { TextBubbleEditor } from '../../../TextBubbleEditor'
 import React from 'react'
 
-type OctaWabaBodyProps = {
-  options: WabaStepContent
-  onOptionsChange: (options: WabaStepContent) => void
+type OptionsSettingsBodyProps = {
+  options: OptionsWabaOptions
+  onOptionsChange: (options: OptionsWabaOptions) => void
 }
 
-export const OctaWabaBody = ({
+export const OptionsSettingsBody = ({
   options,
   onOptionsChange,
-}: OctaWabaBodyProps) => {
+}: OptionsSettingsBodyProps) => {
+  const variableId = "ok"
+
+  console.log(options)
+  
+  // const buttons = options.content
 
   // const handleBodyFormStateChange = (isCustomBody: boolean) =>
   // onOptionsChange({ options. })
 
   const handlerDefault = (e: any) => {
-    console.log('ex', options, e)
+    // onOptionsChange({} as any)
+    console.log('ex')
   }
+  // const handleVariableChange = (variable?: Variable) =>
+  // onOptionsChange({ ...options, variableId: variable?.id })
   // const handleVariableChange = (variable: Variable) => {
   //   onOptionsChange({
   //     ...options,
@@ -48,7 +56,7 @@ export const OctaWabaBody = ({
         <Accordion allowToggle>
           <AccordionItem>
             <h2>
-              <AccordionButton>
+              <AccordionButton >
                 <Box as="span" flex='1' textAlign='left'>
                   Adicionar título
                 </Box>
@@ -66,24 +74,24 @@ export const OctaWabaBody = ({
         </Accordion>
 
         <Stack>
-        <FormLabel mb="0" htmlFor="placeholder">
-          Texto da pergunta
-        </FormLabel>
-        (
-          <TextBubbleEditor
-              onClose={handlerDefault}
-              initialValue={[]}
-              onKeyUp={handlerDefault}
-            />
-        )
-      </Stack>
+          <FormLabel mb="0" htmlFor="placeholder">
+            Texto da pergunta
+          </FormLabel>
+          (
+            <TextBubbleEditor
+                onClose={handlerDefault}
+                initialValue={[]}
+                onKeyUp={handlerDefault}
+              />
+          )
+        </Stack>
 
       <Accordion allowToggle>
           <AccordionItem>
             <h2>
               <AccordionButton>
                 <Box as="span" flex='1' textAlign='left'>
-                  Adicionar título
+                  Adicionar rodapé
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
@@ -94,6 +102,58 @@ export const OctaWabaBody = ({
               initialValue={[]}
               onKeyUp={handlerDefault}
             />
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+          {/* salvar resposta */}
+        <Stack>
+        <VariableSearchInput
+          initialVariableId={variableId}
+          onSelectVariable={handlerDefault}
+        />
+        </Stack>
+
+        <Stack>
+          <FormLabel mb="0" htmlFor="placeholder">
+            Texto do botão
+          </FormLabel>
+          (
+            <TextBubbleEditor
+                onClose={handlerDefault}
+                initialValue={[]}
+                onKeyUp={handlerDefault}
+              />
+          )
+        </Stack>
+
+        <Stack>
+          <FormLabel mb="0" htmlFor="placeholder">
+            Titulo da lista
+          </FormLabel>
+          (
+            <TextBubbleEditor
+                onClose={handlerDefault}
+                initialValue={[]}
+                onKeyUp={handlerDefault}
+              />
+          )
+        </Stack>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex='1' textAlign='left'>
+                  Se o cliente não responder com nenhuma das opções:
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              {/* <TextBubbleEditor
+              onClose={handlerDefault}
+              iinitialValue={options.messages.firstMessage?.content ? options.messages.firstMessage.content.richText : []}
+              onKeyUp={handlerDefault}
+            /> */}
             </AccordionPanel>
           </AccordionItem>
         </Accordion>

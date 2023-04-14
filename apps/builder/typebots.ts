@@ -5,8 +5,8 @@ import {
   BubbleStepType,
   InputStepType,
   LogicStepType,
-  Step,
   WabaStepType,
+  Step,
   DraggableStepType,
   DraggableStep,
   defaultTheme,
@@ -23,12 +23,7 @@ import {
   defaultCpfInputOptions,
   defaultDateInputOptions,
   defaultPhoneInputOptions,
-  defaultUrlInputOptions,
   defaultChoiceInputOptions,
-  defaultAskNameOptions,
-  defaultSetVariablesOptions,
-  defaultRedirectOptions,
-  defaultCodeOptions,
   defaultWebhookOptions,
   StepWithOptionsType,
   Item,
@@ -40,14 +35,11 @@ import {
   OctaStepOptions,
   OctaStepType,
   defaultAssignToTeamOptions,
-  defaultPreReserveOptions,
   defaultEndConversationBubbleContent,
   OctaBubbleStepType,
-  OctaBubbleStepContent,
-  defaultPaymentInputOptions,
-  defaultButtonsWabaContent,
-  defaultOptionsWabaContent,
-  defaultRequestButtons
+  defaultButtonsWabaOptions,
+  defaultOptionsWabaOptions,
+  WabaStepOptions,
 } from 'models'
 import { Typebot } from 'models'
 import useSWR from 'swr'
@@ -66,13 +58,12 @@ import {
 } from 'utils'
 import { dequal } from 'dequal'
 import { stringify } from 'qs'
-import { isChoiceInput, isConditionStep, sendRequest, isOctaBubbleStep } from 'utils'
+import { isChoiceInput, isConditionStep } from 'utils'
 import cuid from 'cuid'
 import { diff } from 'deep-object-diff'
 import { duplicateWebhook } from 'services/webhook'
 import { Plan } from 'model'
-import { isDefined } from '@chakra-ui/utils'
-import { headers, services, subDomain } from '@octadesk-tech/services'
+import { subDomain } from '@octadesk-tech/services'
 import { config } from 'config/octadesk.config'
 import { sendOctaRequest } from 'util/octaRequest'
 
@@ -187,18 +178,6 @@ const duplicateTypebot = (
               ? edgeIdsMapping.get(s.outgoingEdgeId)
               : undefined,
           }
-          // if (
-          //   s.type === LogicStepType.TYPEBOT_LINK &&
-          //   s.options.typebotId === 'current' &&
-          //   isDefined(s.options.blockId)
-          // )
-          //   return {
-          //     ...s,
-          //     options: {
-          //       ...s.options,
-          //       blockId: blockIdsMapping.get(s.options.blockId as string),
-          //     },
-          //   }
           if (stepHasItems(s))
             return {
               ...s,
@@ -290,6 +269,7 @@ export const parseNewStep = (
   blockId: string
 ): DraggableStep => {
   const id = cuid()
+
   return {
     id,
     blockId,
@@ -326,7 +306,7 @@ const parseDefaultItems = (
   }
 }
 
-const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType | WabaStepType): BubbleStepContent => {
+const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType ): BubbleStepContent => {
   switch (type) {
     case BubbleStepType.TEXT:
       return defaultTextBubbleContent
@@ -341,16 +321,20 @@ const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType | WabaSte
   }
 }
 
-const parseOctaStepOptions = (type: OctaStepType): OctaStepOptions | null => {
+const parseOctaStepOptions = (type: OctaStepType | WabaStepType): OctaStepOptions| WabaStepOptions | null => {
   switch (type) {
     case OctaStepType.ASSIGN_TO_TEAM:
       return defaultAssignToTeamOptions
+    case WabaStepType.BUTTONS:
+      return defaultButtonsWabaOptions
     default:
       return null
   }
 }
 
-const parsePreReserveOptions = () => {}
+const parsePreReserveOptions = () => {
+  return true
+}
 
 const parseDefaultStepOptions = (type: StepWithOptionsType): StepOptions | null => {
   switch (type) {
@@ -370,6 +354,10 @@ const parseDefaultStepOptions = (type: StepWithOptionsType): StepOptions | null 
     //   return defaultUrlInputOptions
     case InputStepType.CHOICE:
       return defaultChoiceInputOptions
+    case WabaStepType.BUTTONS: 
+      return defaultButtonsWabaOptions
+    case WabaStepType.OPTIONS:
+      return defaultOptionsWabaOptions
     // case InputStepType.PAYMENT:
     //   return defaultPaymentInputOptions
     // case InputStepType.ASK_NAME:

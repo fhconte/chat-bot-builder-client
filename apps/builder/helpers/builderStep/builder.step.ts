@@ -6,6 +6,7 @@ import { templateDateBot } from './dictionary/input-date.step';
 import { BuilderStepType } from "./types.builder";
 import { templateOfficeHours } from './dictionary/input-officeHours.step';
 import { templateCommerceStep } from './dictionary/input-commerce.step';
+import { templateWabatBot } from './dictionary/input-waba.step';
 
 export const BuildSteps = (
   stepIndices: StepIndices
@@ -40,6 +41,12 @@ export const BuildSteps = (
           break;
         case WabaStepType.COMMERCE:
           step = templateCommerceStep(bot, blockId, "Este é o catálogo que selecionamos para você:")
+          break;
+        case WabaStepType.BUTTONS:
+          step = templateWabatBot(bot, blockId, 'Pergunta com botões interativos')
+          break;
+        case WabaStepType.OPTIONS:
+          step = templateWabatBot(bot, blockId, 'Pergunta com Lista de opções')
           break;
         default:
           step = [parseNewStep(type, blockId)]

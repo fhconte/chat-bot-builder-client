@@ -1,1 +1,3 @@
-export { OctaWabaBody } from './OctaWabaBody'
+export { ButtonsSettingsBody } from './ButtonsSettingsBody'
+
+export { OptionsSettingsBody } from  './OptionsSettingsBody'
