@@ -42,8 +42,9 @@ export const MediaBubblePopoverContent = (props: Props) => {
 export const MediaBubbleContent = ({ step, onContentChange }: Props) => {
   const handleImageUrlChange = (url: string, type: string, name: string, size: number) => onContentChange({ url, type, name, size })
 
+  console.log(step.type)
   switch (step.type) {
-    case BubbleStepType.IMAGE: {
+    case BubbleStepType.MEDIA: {
       return (
         <ImageUploadContent
           url={step.content?.url}

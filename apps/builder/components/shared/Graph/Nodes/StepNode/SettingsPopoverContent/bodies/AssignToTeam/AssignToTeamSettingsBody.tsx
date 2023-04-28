@@ -69,7 +69,7 @@ export const AssignToTeamSettingsBody = ({
     <Stack spacing={4}>
       <Stack>
         <FormLabel mb="0" htmlFor="placeholder">
-          Mensagem do bot
+          Mensagem do bot teste
         </FormLabel>
         (
         <TextBubbleEditor
