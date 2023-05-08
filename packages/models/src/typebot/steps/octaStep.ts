@@ -216,7 +216,7 @@ export const defaultAssignToTeamOptions: AssignToTeamOptions = {
   subject: '',
   assignTo: '',
   assignType: '',
-  isAvailable: false,
+  isAvailable: true,
 }
 
 export const defaultEndConversationBubbleContent: EndConversationBubbleContent =
