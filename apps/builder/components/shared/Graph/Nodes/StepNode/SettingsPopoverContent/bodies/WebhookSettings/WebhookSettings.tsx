@@ -69,6 +69,7 @@ export const WebhookSettings = ({
   const [isTestResponseLoading, setIsTestResponseLoading] = useState(false)
   const [testResponse, setTestResponse] = useState<string>()
   const [responseKeys, setResponseKeys] = useState<string[]>([])
+  const [successTest, setSuccessTest] = useState<string>()
 
   if (step.options.path?.length)
   {
@@ -83,13 +84,26 @@ export const WebhookSettings = ({
 
   const handleUrlChange = (url?: string) => {
     if (step.options.url != url) clearOptions()
+    console.log('url:', url)
+
     if (url && url.length > 5) {
       const newUrl = new URL(url.replace(/ /g, '').trim())
+      console.log('new', newUrl)
       url = newUrl.origin
+      
+      const hasPath = step.options.path.length
 
       if (newUrl.search) handleParams(newUrl.search)
 
-      //addParams('path', '', newUrl.pathname, newUrl.pathname)
+      if(hasPath == 1) {
+        step.options.path[hasPath].value = newUrl.pathname
+        step.options.path[hasPath].displayValue = newUrl.pathname
+        step.options.path[hasPath].properties = undefined
+      } else {
+        addParams('path', '', newUrl.pathname, newUrl.pathname)
+      }
+
+      console.log('url', step.options)
 
       onOptionsChange({
         ...step.options,
@@ -106,6 +120,8 @@ export const WebhookSettings = ({
     options.responseVariableMapping = []
     options.variablesForTest = []
     options.headers = []
+
+    setTestResponse(undefined)
   }
 
   const handleParams = (url: string) => {
@@ -119,13 +135,27 @@ export const WebhookSettings = ({
   }
 
   const addParams = (type: string, key: string, value: string, displayValue: string, properties?: Variable | undefined) => {
-    step.options.path.push({
+    const pathVariables = {
       key: key || '',
       value: value || '',
       displayValue: displayValue || '',
       type,
       isNew: true,
       properties: properties
+    } as any
+    console.log('2:', pathVariables)
+    console.log('step', step.options.path)
+
+    step.options.path = {...step.options.path , ...pathVariables}
+
+    onOptionsChange({
+      ...step.options,
+      path: { ...step.options.path }
+    })
+
+    onOptionsChange({
+      ...step.options,
+      path: {...step.options.path}
     })
   }
 
@@ -210,6 +240,11 @@ export const WebhookSettings = ({
     const options = step.options as WebhookOptions
     const parameters = options.parameters.concat(options.path, options.headers)
 
+    console.log('ops', options)
+    console.log('certo', step.options)
+
+    console.log('params', parameters)
+
     const localWebhook = {
       method: options.method,
       body: options.body,
@@ -231,13 +266,18 @@ export const WebhookSettings = ({
     const { response, success } = data
 
     setIsTestResponseLoading(false)
+    setSuccessTest(success)
 
-    if (!success) return toast({ title: 'Error', description: `Não foi possivel realizar a sua integração 😢` })
+    if (!success) {
+      toast({ title: 'Error', description: `Não foi possivel executar sua integração. 😢` })
+    }
 
     if (typeof response === 'object') {
+      console.log('sucesso')
       setTestResponse(JSON.stringify(response, undefined, 2))
       setResponseKeys(getDeepKeys(response))
     } else {
+      console.log('falha')
       setTestResponse(response)
     }
   }
@@ -389,7 +429,7 @@ export const WebhookSettings = ({
         {testResponse && (
           <CodeEditor isReadOnly lang="json" value={testResponse} />
         )}
-        {(testResponse || step.options?.responseVariableMapping.length > 0) && (
+        {(successTest) && (
           <Accordion allowToggle allowMultiple>
             <AccordionItem>
               <AccordionButton justifyContent="space-between">
