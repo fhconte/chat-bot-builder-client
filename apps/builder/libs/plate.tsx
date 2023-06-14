@@ -5,6 +5,8 @@ import {
 } from '@udecode/plate-basic-marks'
 import { createPlugins } from '@udecode/plate-core'
 import { createLinkPlugin, ELEMENT_LINK } from '@udecode/plate-link'
+import { createComboboxPlugin, createEmojiPlugin } from '@udecode/plate';
+
 
 export const editorStyle: React.CSSProperties = {
   flex: 1,
@@ -19,6 +21,8 @@ export const platePlugins = createPlugins(
     createItalicPlugin(),
     createUnderlinePlugin(),
     createLinkPlugin(),
+    createComboboxPlugin(),
+    createEmojiPlugin(),
   ],
   {
     components: {
