@@ -108,7 +108,7 @@ export const VariableSearchInput = ({
     return acc
   }, Object.create(null))
 
-  const options = Object.values(grouped)
+  const options: Variable[] = Object.values(grouped)
 
   const [inputValue, setInputValue] = useState(
     variables.find(byId(initialVariableId))?.token ?? ''
@@ -153,6 +153,10 @@ export const VariableSearchInput = ({
     },
     [debounced]
   )
+
+  const handleContentWheel: WheelEventHandler = (event) => {
+    event.stopPropagation()
+  }
 
   const {setIsPopoverOpened} = useContext(StepNodeContext)
 
@@ -249,7 +253,9 @@ export const VariableSearchInput = ({
       {screen === 'VIEWER' && (
         <Container data-screen={screen}>
           Selecione uma variável para salvar a resposta:
-          <div>
+          <div
+            onWheelCapture={handleContentWheel}
+          >
             <Select
               isClearable={true}
               noOptionsMessage={() => 'Variável não encontrada'}
@@ -257,7 +263,7 @@ export const VariableSearchInput = ({
               minMenuHeight={50}
               options={options}
               placeholder={inputProps.placeholder ?? 'Selecione a variável'}
-              getOptionLabel={(option) => option.token}
+              getOptionLabel={(option: Variable) => option.token}
               />
           </div>
           {addVariable && (
