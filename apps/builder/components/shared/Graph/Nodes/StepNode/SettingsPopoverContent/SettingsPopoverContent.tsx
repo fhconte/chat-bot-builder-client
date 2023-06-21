@@ -77,6 +77,9 @@ export const SettingsPopoverContent = ({ onExpandClick, ...props }: Props) => {
       case OctaWabaStepType.WHATSAPP_BUTTONS_LIST:
         width = 450;
         break;
+      case IntegrationStepType.WEBHOOK:
+        width = 500;
+        break;
       // case OctaWabaStepType.COMMERCE:
       //   width = 450;
       //   break;
