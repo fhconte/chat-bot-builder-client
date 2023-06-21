@@ -133,7 +133,7 @@ export const SettingsPopoverContent = ({ onExpandClick, ...props }: Props) => {
         <IconButton
           pos="absolute"
           top="5px"
-          right="5px"
+          right="20px"
           aria-label="expand"
           icon={<ExpandIcon />}
           size="xs"
