@@ -79,31 +79,49 @@ export const WebhookSettings = ({
     status: 'error',
   })
 
-  const handleUrlChange = (url: string) => {
-    if (step.options.url != url) clearOptions()
+  const headers: { key: string, value: string }[] = [];
 
-    if (url && url.length > 5) {
-      const newUrl = new URL(url.replace(/ /g, '').trim())
-      url = newUrl.origin
-      
-      const hasPath = step.options.path.length
+const handleUrlChange = (url: string) => {
+  if (step.options.url != url) clearOptions()
 
-      if (newUrl.search) handleParams(newUrl.search)
+  if (url && url.length > 5) {
+    const newUrl = new URL(url.replace(/ /g, '').trim())
+    url = newUrl.origin
 
-      if(hasPath == 1) {
-        step.options.path[hasPath].value = newUrl.pathname
-        step.options.path[hasPath].displayValue = newUrl.pathname
-        step.options.path[hasPath].properties = undefined
-      } else {
-        addParams('path', '', newUrl.pathname, newUrl.pathname)
-      }
+    const params = new URLSearchParams(newUrl.search)
 
-      onOptionsChange({
-        ...step.options,
-        url: (url ? url : "")
-      })
+    params.forEach((value, key) => {
+      console.log(`Param: ${key} = ${value}`);
+
+      const header = {
+        key: key,
+        value: value
+      };
+
+      headers.push(header);
+    });
+
+  //  step.options.headers = headers;
+
+    const hasPath = step.options.path.length;
+
+    if (newUrl.search) handleParams(newUrl.search);
+
+    if (hasPath == 1) {
+      step.options.path[hasPath].value = newUrl.pathname;
+      step.options.path[hasPath].displayValue = newUrl.pathname;
+      step.options.path[hasPath].properties = undefined;
+    } else {
+      addParams('path', '', newUrl.pathname, newUrl.pathname);
     }
+
+    onOptionsChange({
+      ...step.options,
+      url: (url ? url : "")
+    });
   }
+}
+
 
   const clearOptions = () => {
     const options = step.options
