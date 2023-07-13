@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useMemo, useState, useRef } from 'react'
+import React, { ChangeEvent, useEffect, useMemo, useState, useRef } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -16,9 +16,11 @@ import {
   ModalContent,
   ModalCloseButton,
   ModalBody,
+  FormControl,
+  IconButton,
   useDisclosure
-} from '@chakra-ui/react'
-import { useTypebot } from 'contexts/TypebotContext'
+} from '@chakra-ui/react';
+import { useTypebot } from 'contexts/TypebotContext';
 import {
   WebhookOptions,
   VariableForTest,
@@ -28,20 +30,22 @@ import {
   Variable,
   Session,
   VariableLight
-} from 'models'
-import { DropdownList } from 'components/shared/DropdownList'
-import { TableList, TableListItemProps } from 'components/shared/TableList'
-import { CodeEditor } from 'components/shared/CodeEditor'
-import { OpenEditorBody } from './OpenEditorBody'
-import { getDeepKeys } from 'services/integrations'
-import { VariableForTestInputs } from './VariableForTestInputs'
-import { DataVariableInputs } from './ResponseMappingInputs'
-import { SwitchWithLabel } from 'components/shared/SwitchWithLabel'
-import { sendOctaRequest } from 'util/octaRequest'
-import { HeadersInputs, QueryParamsInputs } from './KeyValueInputs'
-import { Options } from 'use-debounce'
-import { Input, Textarea } from 'components/shared/Textbox'
-// import { validateUrl } from 'utils'
+} from 'models';
+import { TrashIcon } from 'assets/icons'
+import { DropdownList } from 'components/shared/DropdownList';
+import { TableList, TableListItemProps } from 'components/shared/TableList';
+import { CodeEditor } from 'components/shared/CodeEditor';
+import { OpenEditorBody } from './OpenEditorBody';
+import { getDeepKeys } from 'services/integrations';
+import { VariableForTestInputs } from './VariableForTestInputs';
+import { DataVariableInputs } from './ResponseMappingInputs';
+import { SwitchWithLabel } from 'components/shared/SwitchWithLabel';
+import { sendOctaRequest } from 'util/octaRequest';
+import { HeadersInputs, QueryParamsInputs } from './KeyValueInputs';
+import { Options } from 'use-debounce';
+import { Input, Textarea } from 'components/shared/Textbox';
+import { VariableSearchInput } from 'components/shared/VariableSearchInput/VariableSearchInput'
+// import { validateUrl } from 'utils';
 
 enum HttpMethodsWebhook {
   POST = "POST",
@@ -61,72 +65,79 @@ export const WebhookSettings = ({
   step,
   onOptionsChange
 }: Props) => {
-  const { typebot } = useTypebot()
-  const [isTestResponseLoading, setIsTestResponseLoading] = useState(false)
-  const [testResponse, setTestResponse] = useState<string>()
-  const [responseKeys, setResponseKeys] = useState<string[]>([])
-  const [successTest, setSuccessTest] = useState<string>()
-  const [mountUrl, setMountUrl] = useState<string>()
+  const { typebot } = useTypebot();
+  const [isTestResponseLoading, setIsTestResponseLoading] = useState(false);
+  const [testResponse, setTestResponse] = useState<string>();
+  const [responseKeys, setResponseKeys] = useState<string[]>([]);
+  const [successTest, setSuccessTest] = useState<string>();
+  const [mountUrl, setMountUrl] = useState<string>();
+  const { onOpen, onClose, isOpen } = useDisclosure();
+  const [showModal, setShowModal] = useState(false);
+  const [addVariable, setAddVariable] = useState<boolean>(false)
+  const [selectedVariable, setSelectedVariable] = useState<Pick<Variable, 'id' | 'name' | 'token'>>();
+ const [textareaValue, setTextareaValue] = useState('');
 
   if (step.options.path?.length)
   {
-    step.options.url += step.options.path?.length ? step.options.path[0].value : ''
-    step.options.path = []
+    step.options.url += step.options.path?.length ? step.options.path[0].value : '';
+    step.options.path = [];
   }
   
   const toast = useToast({
     position: 'top-right',
     status: 'error',
-  })
+  });
+
+  const textareaRef = useRef(null);
 
   const handleUrlChange = (url: string) => {
-    if (step.options.url != url) clearOptions()
+    if (step.options.url != url) clearOptions();
 
     if (url && url.length > 5) {
-      const newUrl = new URL(url.replace(/ /g, '').trim())
-      url = newUrl.origin
+      const newUrl = new URL(url.replace(/ /g, '').trim());
+      url = newUrl.origin;
       
-      const hasPath = step.options.path.length
+      const hasPath = step.options.path.length;
 
-      if (newUrl.search) handleParams(newUrl.search)
+      if (newUrl.search) handleParams(newUrl.search);
 
       if(hasPath == 1) {
-        step.options.path[hasPath].value = newUrl.pathname
-        step.options.path[hasPath].displayValue = newUrl.pathname
-        step.options.path[hasPath].properties = undefined
+        step.options.path[hasPath].value = newUrl.pathname;
+        step.options.path[hasPath].displayValue = newUrl.pathname;
+        step.options.path[hasPath].properties = undefined;
       } else {
-        addParams('path', '', newUrl.pathname, newUrl.pathname)
+        addParams('path', '', newUrl.pathname, newUrl.pathname);
       }
 
       onOptionsChange({
         ...step.options,
         url: (url ? url : "")
-      })
+      });
     }
-  }
+  };
 
   const clearOptions = () => {
-    const options = step.options
-    options.parameters = []
-    options.path = []
-    options.returnMap = ""
-    options.responseVariableMapping = []
-    options.variablesForTest = []
-    options.headers = []
+    const options = step.options;
+    options.parameters = [];
+    options.path = [];
+    options.returnMap = "";
+    options.responseVariableMapping = [];
+    options.variablesForTest = [];
+    options.headers = [];
 
-    setTestResponse(undefined)
-    setSuccessTest("")
-  }
+    setTestResponse(undefined);
+    setSuccessTest("");
+  };
 
   const handleParams = (url: string) => {
-    const params = url.substring(1).split('&')
+    const params = url.substring(1).split('&');
     params.forEach(p => {
-      const keyValue = p.split('=')
+      const keyValue = p.split('=');
       if (keyValue.length === 2) {
-        addParams('query', keyValue[0], keyValue[1], keyValue[1])
+        addParams('query', keyValue[0], keyValue[1], keyValue[1]);
       }
-    })
-  }
+    });
+  };
 
   const addParams = (type: string, key: string, value: string, displayValue: string, properties?: Variable | undefined) => {
     const pathVariables = {
@@ -136,120 +147,120 @@ export const WebhookSettings = ({
       type,
       isNew: true,
       properties: properties
-    } as any
+    } as any;
 
     if(type == 'path') {
-      step.options.path = {...step.options.path , ...pathVariables}
+      step.options.path = {...step.options.path , ...pathVariables};
 
       onOptionsChange({
         ...step.options,
         path: { ...step.options.path }
-      })
+      });
     }
     else {
-      step.options.parameters.push(pathVariables)
+      step.options.parameters.push(pathVariables);
       
       onOptionsChange({
         ...step.options,
         parameters: { ...step.options.parameters }
-      })
+      });
     }
 
 
     onOptionsChange({
       ...step.options,
       path: {...step.options.path}
-    })
-  }
+    });
+  };
 
   const handleMethodChange = (method: HttpMethodsWebhook) => {
-    if (step.options.method != method) clearOptions()
+    if (step.options.method != method) clearOptions();
     onOptionsChange({
       ...step.options,
       method: method
-    })
-  }
+    });
+  };
 
   const handleQueryParamsChange = (parameters: QueryParameters[]) => {
     onOptionsChange({
       ...step.options,
       parameters
-    })
-  }
+    });
+  };
 
   const handleHeadersChange = (headers: QueryParameters[]) => {
     onOptionsChange({
       ...step.options,
       headers
-    })
-  }
+    });
+  };
 
   const handleBodyChange = (body: string) => {
     onOptionsChange({
       ...step.options,
       body: body
-    })
-  }
+    });
+  };
 
   const handleVariablesChange = (variablesForTest: VariableForTest[]) =>
-    onOptionsChange({ ...step.options, variablesForTest })
+    onOptionsChange({ ...step.options, variablesForTest });
 
   const handleResponseMappingChange = (
     responseVariableMapping: ResponseVariableMapping[]
   ) => {
-    onOptionsChange({ ...step.options, responseVariableMapping })
-  }
+    onOptionsChange({ ...step.options, responseVariableMapping });
+  };
 
-  const handleAdvancedConfigChange = (isAdvancedConfig: boolean) =>
-    onOptionsChange({ ...step.options, isAdvancedConfig })
+  const handleAdvancedConfigChange = (isAdvancedConfig:boolean) =>
+    onOptionsChange({ ...step.options, isAdvancedConfig });
 
   const handleBodyFormStateChange = (isCustomBody: boolean) =>
-    onOptionsChange({ ...step.options, isCustomBody })
+    onOptionsChange({ ...step.options, isCustomBody });
 
   const resolveSession = (variablesForTest: VariableForTest[], variables: Variable[]) => {
-    if (!variablesForTest?.length || !variables?.length) return {}
+    if (!variablesForTest?.length || !variables?.length) return {};
 
     const session: Session = {
       propertySpecs: [],
       properties: {}
-    }
+    };
 
     variablesForTest.forEach(testVariable => {
-      const variable = variables.find(v => v.id === testVariable.variableId)
-      if (!variable) return
+      const variable = variables.find(v => v.id === testVariable.variableId);
+      if (!variable) return;
 
       const light: VariableLight = {
         domain: variable.domain,
         name: variable.name,
         token: variable.token,
         type: variable.type
-      }
+      };
 
-      session.propertySpecs.push(light)
+      session.propertySpecs.push(light);
       if (!session.properties[light.domain])
-        session.properties[light.domain] = {}
+        session.properties[light.domain] = {};
 
-      session.properties[light.domain][light.name] = { spec: light, value: testVariable.value }
-    })
+      session.properties[light.domain][light.name] = { spec: light, value: testVariable.value };
+    });
 
-    return session
-  }
+    return session;
+  };
 
   const handleTestRequestClick = async () => {
-    if (!typebot || !step.options) return
-    setIsTestResponseLoading(true)
+    if (!typebot || !step.options) return;
+    setIsTestResponseLoading(true);
 
-    const options = step.options as WebhookOptions
-    const parameters = step.options.parameters.concat(options.path, options.headers)
+    const options = step.options as WebhookOptions;
+    const parameters = step.options.parameters.concat(options.path, options.headers);
 
     const localWebhook = {
       method: options.method,
       body: options.body,
       parameters: parameters,
       url: options.url
-    }
+    };
 
-    const session = resolveSession(options.variablesForTest, typebot.variables)
+    const session = resolveSession(options.variablesForTest, typebot.variables);
 
     const { data } = await sendOctaRequest({
       url: `validate/webhook`,
@@ -258,35 +269,48 @@ export const WebhookSettings = ({
         session,
         webhook: localWebhook
       }
-    })
+    });
 
-    const { response, success } = data
+    const { response, success } = data;
 
-    setIsTestResponseLoading(false)
-    setSuccessTest(success)
+    setIsTestResponseLoading(false);
+    setSuccessTest(success);
 
     if (!success) {
-      toast({ title: 'Error', description: `Não foi possivel executar sua integração. 😢` })
+      toast({ title: 'Error', description: `Não foi possivel executar sua integração. 😢` });
     }
 
     if (typeof response === 'object') {
-      setTestResponse(JSON.stringify(response, undefined, 2))
-      setResponseKeys(getDeepKeys(response))
+      setTestResponse(JSON.stringify(response, undefined, 2));
+      setResponseKeys(getDeepKeys(response));
     } else {
-      setTestResponse(response)
+      setTestResponse(response);
     }
-  }
+  };
 
   const ResponseMappingInputs = useMemo(
     () => (props: TableListItemProps<ResponseVariableMapping>) =>
       <DataVariableInputs {...props} dataItems={responseKeys} />,
     [responseKeys]
-  )
+  );
 
-  const handlerDefault = (e: any) => {
-    console.log('e', e)
+    const handleButtonVariable = () => {
+    setAddVariable(!addVariable)
   }
 
+  const handleTextareaKeyDown = (event) => {
+    if (event.key === '#') {
+      setShowModal(true);
+      console.log('O caractere "#" foi pressionado!');
+    }
+  };
+
+
+  const handleVariableSelected = (
+    variable?: Pick<Variable, 'id' | 'name' | 'token'>
+  ) => {
+    // const insert = `{{${variable?.token}}}`
+  }
   return (
     <Stack spacing={4}>
       (
@@ -311,14 +335,41 @@ export const WebhookSettings = ({
                   na sua composição (ex.: https://apiurl.com/<strong>#valor</strong>/valid)
                 </Text>
                 <Textarea
+                  ref={textareaRef}
                   placeholder="Digite o endereço da API ou do sistema"
                   defaultValue={step.options.url ?? ''}
                   onChange={handleUrlChange}
                   debounceTimeout={0}
+                  value={textareaValue}
+                  onKeyDown={handleTextareaKeyDown}
                 />
               </AccordionPanel>
             </AccordionItem>
-            {/* {hasPath && (
+            {showModal && (
+              <HStack flexDirection={'column'} width="full" className='modal' isOpen={isOpen} onClose={onClose}>
+                <IconButton
+                  icon={<TrashIcon />}
+                  aria-label="Editor body"
+                  size="xs"
+                  onClick={handleButtonVariable}
+                  alignSelf={'flex-start'}
+                  width={'25px'}
+                  top={'15px'}
+                  right={'10px'}
+                />
+                <Stack rounded="md" flex="1">
+                  <FormControl>
+                    <VariableSearchInput
+                      onSelectVariable={handleVariableSelected}
+                      placeholder="Pesquise sua variável"
+                      isCloseModal={false}
+                    />
+                  </FormControl>
+                </Stack>
+            </HStack>
+          )}
+            {
+            /* {hasPath && (
               <AccordionItem>
                 <AccordionButton justifyContent="space-between">
                   Path
@@ -480,5 +531,5 @@ export const WebhookSettings = ({
         )}
       </Stack>
     </Stack>
-  )
-}
+  );
+};
