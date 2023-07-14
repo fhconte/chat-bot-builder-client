@@ -36,10 +36,15 @@ import { QueryParamsInputs } from './KeyValueInputs'
 import { Input, Textarea } from 'components/shared/Textbox'
 import { stepTypeHasWebhook } from 'utils'
 import { optionCSS } from 'react-select/dist/declarations/src/components/Option'
+import { type } from 'os'
 
 type Props = {
   step: WebhookStep
   onOptionsChange: (options: WebhookOptions) => void
+}
+type ResponseDataProps = {
+  status: number,
+  response: string
 }
 
 export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
@@ -194,7 +199,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
     })
   }
 
-  const [responseData, setResponseData] = useState({status: ''})
+  const [responseData, setResponseData] = useState<ResponseDataProps>()
 
   const handleAddedVariables = (addedVariables: Array<string | undefined>) => {
     const selectedVariables = addedVariables.flatMap((addedVar: string | undefined) => {
@@ -485,7 +490,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
           </Button>
           
         )}
-       {responseData && responseData.status ? (
+       {responseData?.status && responseData.status !== 200 ? (
           <div style={{
             backgroundColor: '#cd3838',
             color: 'white',
