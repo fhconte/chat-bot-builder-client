@@ -5,6 +5,7 @@ import {
   PhoneNumberInputStep,
   TextInputStep,
   UrlInputStep,
+  AskNameInputStep,
 } from 'models'
 import React, { FormEvent, useState } from 'react'
 import { SendButton } from '../SendButton'
@@ -17,6 +18,7 @@ type TextFormProps = {
     | CpfInputStep
     | UrlInputStep
     | PhoneNumberInputStep
+    | AskNameInputStep
   onSubmit: (value: string) => void
   defaultValue?: string
   hasGuestAvatar: boolean
@@ -30,7 +32,7 @@ export const TextForm = ({
 }: TextFormProps) => {
   const [inputValue, setInputValue] = useState(defaultValue ?? '')
 
-  const isLongText = step.type === InputStepType.TEXT && step.options?.isLong
+  const isLongText = false
 
   const handleChange = (inputValue: string) => {
     if (step.type === InputStepType.URL && !inputValue.startsWith('https://'))
@@ -59,7 +61,7 @@ export const TextForm = ({
     >
       <TextInput step={step} onChange={handleChange} value={inputValue} />
       <SendButton
-        label={step.options?.labels?.button ?? 'Send'}
+        label={'Enviar'}
         isDisabled={inputValue === ''}
         className="my-2 ml-2"
       />

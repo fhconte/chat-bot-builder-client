@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useAnswers } from '../../../contexts/AnswersContext'
-import { InputStep, InputStepType } from 'models'
+import { BubbleStepType, InputOptions, InputStep, InputStepType, Step, TextBubbleStep } from 'models'
 import { GuestBubble } from './bubbles/GuestBubble'
 import { TextForm } from './inputs/TextForm'
 import { byId } from 'utils'
@@ -15,7 +15,7 @@ export const InputChatStep = ({
   step,
   hasAvatar,
   hasGuestAvatar,
-  onTransitionEnd,
+  onTransitionEnd
 }: {
   step: InputStep
   hasGuestAvatar: boolean
@@ -94,7 +94,7 @@ const Input = ({
     case InputStepType.TEXT:
     case InputStepType.EMAIL:
     case InputStepType.CPF:
-    // case InputStepType.URL:
+    case InputStepType.ASK_NAME:
     case InputStepType.PHONE:
       return (
         <TextForm
@@ -104,8 +104,8 @@ const Input = ({
           hasGuestAvatar={hasGuestAvatar}
         />
       )
-    case InputStepType.DATE:
-      return <DateForm options={step.options} onSubmit={onSubmit} />
+    // case InputStepType.DATE:
+    //   return <DateForm options={step.options} onSubmit={onSubmit} />
     case InputStepType.CHOICE:
       return <ChoiceForm step={step} onSubmit={onSubmit} />
     // case InputStepType.PAYMENT:

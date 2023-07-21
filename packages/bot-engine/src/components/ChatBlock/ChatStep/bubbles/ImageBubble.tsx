@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTypebot } from 'contexts/TypebotContext'
-import { ImageBubbleStep } from 'models'
+import { ImageBubbleStep, MediaBubbleStep } from 'models'
 import { TypingContent } from './TypingContent'
 import { parseVariables } from 'services/variable'
 
 type Props = {
-  step: ImageBubbleStep
+  step: ImageBubbleStep | MediaBubbleStep
   onTransitionEnd: () => void
 }
 

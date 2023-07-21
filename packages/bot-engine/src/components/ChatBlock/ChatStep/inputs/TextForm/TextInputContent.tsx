@@ -18,12 +18,12 @@ import PhoneInput, { Value, Country } from 'react-phone-number-input'
 
 type TextInputProps = {
   step:
-    | TextInputStep
-    | EmailInputStep
-    | CpfInputStep
-    | UrlInputStep
-    | PhoneNumberInputStep
-    | AskNameInputStep
+  | TextInputStep
+  | EmailInputStep
+  | CpfInputStep
+  | UrlInputStep
+  | PhoneNumberInputStep
+  | AskNameInputStep
   value: string
   onChange: (value: string) => void
 }
@@ -47,35 +47,21 @@ export const TextInput = ({ step, value, onChange }: TextInputProps) => {
   }
 
   switch (step.type) {
-    case InputStepType.TEXT: {
-      return step.options?.isLong ? (
-        <LongTextInput
-          ref={inputRef as unknown as RefObject<HTMLTextAreaElement>}
-          value={value}
-          placeholder={
-            step.options?.labels?.placeholder ?? 'Digite a sua resposta...'
-          }
-          onChange={handleInputChange}
-        />
-      ) : (
-        <ShortTextInput
-          ref={inputRef}
-          value={value}
-          placeholder={
-            step.options?.labels?.placeholder ?? 'Digite a sua resposta...'
-          }
-          onChange={handleInputChange}
-        />
-      )
+    case InputStepType.TEXT:
+    case InputStepType.ASK_NAME: {
+      return <ShortTextInput
+        ref={inputRef}
+        value={value}
+        placeholder={'Digite a sua resposta...'}
+        onChange={handleInputChange}
+      />
     }
     case InputStepType.EMAIL: {
       return (
         <ShortTextInput
           ref={inputRef}
           value={value}
-          placeholder={
-            step.options?.labels?.placeholder ?? 'Digite o seu email...'
-          }
+          placeholder={'Digite o seu email...'}
           onChange={handleInputChange}
         />
       )
@@ -85,22 +71,8 @@ export const TextInput = ({ step, value, onChange }: TextInputProps) => {
         <ShortTextInput
           ref={inputRef}
           value={value}
-          placeholder={
-            step.options?.labels?.placeholder ?? 'Digite o seu cpf...'
-          }
+          placeholder={'Digite o seu cpf...'}
           onChange={handleInputChange}
-        />
-      )
-    }
-    case InputStepType.ASK_NAME: {
-      return (
-        <ShortTextInput
-        ref={inputRef}
-        value={value}
-        placeholder={
-          step.options?.labels?.placeholder ?? 'Digite o seu email...'
-        }
-        onChange={handleInputChange}
         />
       )
     }
@@ -124,10 +96,8 @@ export const TextInput = ({ step, value, onChange }: TextInputProps) => {
           ref={inputRef as any}
           value={value}
           onChange={handlePhoneNumberChange}
-          placeholder={
-            step.options.labels.placeholder ?? 'Seu número de telefone...'
-          }
-          defaultCountry={step.options.defaultCountryCode as Country}
+          placeholder={'Seu número de telefone...'}
+          defaultCountry={'BR' as Country}
         />
       )
     }

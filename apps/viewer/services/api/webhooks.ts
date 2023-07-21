@@ -112,8 +112,6 @@ const getSampleValue = (step: InputStep) => {
       return new Date().toUTCString()
     case InputStepType.EMAIL:
       return 'test@email.com'
-    case InputStepType.NUMBER:
-      return '20'
     case InputStepType.PHONE:
       return '+33665566773'
     case InputStepType.TEXT:

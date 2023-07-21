@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useTypebot } from 'contexts/TypebotContext'
-import { BubbleStepType, TextBubbleStep } from 'models'
+import { BubbleStepType, EndConversationStep, TextBubbleStep } from 'models'
 import { computeTypingTimeout } from 'services/chat'
 import { TypingContent } from './TypingContent'
 import { parseVariables } from 'services/variable'
 
 type Props = {
-  step: TextBubbleStep
+  step: TextBubbleStep | EndConversationStep
   onTransitionEnd: () => void
 }
 
@@ -35,7 +35,7 @@ export const TextBubble = ({ step, onTransitionEnd }: Props) => {
     setTimeout(() => {
       onTypingEnd()
     }, typingTimeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onTypingEnd = () => {
