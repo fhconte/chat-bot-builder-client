@@ -1,7 +1,5 @@
 import { headers, services } from '@octadesk-tech/services'
 
-const TIMEOUT_DURATION = 30000 // 30 segundos
-
 enum HttpMethod {
   GET = 'GET',
   POST = 'POST',
@@ -13,11 +11,13 @@ enum HttpMethod {
 interface OctaRequest {
   url: string
   method: HttpMethod
-  body?: any
+  body?: unknown
   timeout?: number
 }
 
-type OctaResponse = any
+type OctaResponse = unknown
+
+const TIMEOUT_DURATION = 30000
 
 const sendOctaRequest = async (request: OctaRequest): Promise<OctaResponse> => {
   const client = await services.chatBots.getClient()
@@ -51,7 +51,7 @@ const sendOctaRequest = async (request: OctaRequest): Promise<OctaResponse> => {
         request.url,
         request.body,
         authorationHeaders
-      ) // Assumindo que o cliente tem um método patch
+      )
       break
     case HttpMethod.DELETE:
       requestPromise = client.delete(request.url, authorationHeaders)
