@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   Accordion,
   AccordionButton,
@@ -23,7 +23,6 @@ import {
   VariableLight,
   HttpMethodsWebhook,
 } from 'models'
-import { colors } from 'libs/theme'
 import { DropdownList } from 'components/shared/DropdownList'
 import { TableList, TableListItemProps } from 'components/shared/TableList'
 import { CodeEditor } from 'components/shared/CodeEditor'
@@ -32,7 +31,7 @@ import { getDeepKeys } from 'services/integrations'
 import { VariableForTestInputs } from './VariableForTestInputs'
 import { DataVariableInputs } from './ResponseMappingInputs'
 import { SwitchWithLabel } from 'components/shared/SwitchWithLabel'
-import { sendOctaRequest } from 'util/octaRequest'
+import { sendOctaRequest, HttpMethod } from 'util/octaRequest'
 import { QueryParamsInputs } from './KeyValueInputs'
 import { Input, Textarea } from 'components/shared/Textbox'
 
@@ -47,15 +46,21 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
   const [testResponse, setTestResponse] = useState<string>()
   const [responseKeys, setResponseKeys] = useState<string[]>([])
   const [successTest, setSuccessTest] = useState<string>()
+  const [responseData, setResponseData] = useState({ status: '' })
 
-  const toast = useToast({
+  const errorToast = useToast({
     position: 'top-right',
     status: 'error',
   })
 
+  const successToast = useToast({
+    position: 'top-right',
+    status: 'success',
+  })
+
   const [webhookUrl, setWebhookUrl] = useState(step.options?.url)
   const [pathPortion, setPath] = useState(step.options?.path)
-  const [bodyPortion, setBody] = useState(step.options?.body)
+  // const [bodyPortion, setBody] = useState(step.options?.body)
   const [variablesKeyDown, setVariablesKeyDown] = useState<KeyboardEvent>()
 
   const effectPathChange = () => {
@@ -70,7 +75,14 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
     setPath(path)
   }
 
+  const clearOptions = () => {
+    setResponseData({ status: '' })
+    setTestResponse(undefined)
+    setSuccessTest('')
+  }
+
   const handleUrlChange = (url: string) => {
+    clearOptions()
     setWebhookUrl(url)
   }
 
@@ -115,11 +127,6 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
     handleAddedVariables(webhookUrlVariables)
   }
 
-  const clearOptions = () => {
-    setTestResponse(undefined)
-    setSuccessTest('')
-  }
-
   const handleParams = (url: string) => {
     const params = url.substring(1).split('&')
     params.forEach((p) => {
@@ -149,7 +156,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
       type,
       isNew: true,
       properties: properties,
-    } as any
+    }
 
     step.options.parameters.push(newParameter)
 
@@ -205,8 +212,6 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
       body,
     })
   }
-
-  const [responseData, setResponseData] = useState({ status: '' })
 
   const handleAddedVariables = (addedVariables: Array<string | undefined>) => {
     const selectedVariables = addedVariables
@@ -307,32 +312,47 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
 
     const session = resolveSession(options.variablesForTest, typebot.variables)
 
-    const { data } = await sendOctaRequest({
-      url: `validate/webhook`,
-      method: 'POST',
-      body: {
-        session,
-        webhook: localWebhook,
-      },
-    })
-
-    const { response, success } = data
-
-    setIsTestResponseLoading(false)
-    setSuccessTest(success)
-    setResponseData(data)
-    if (!success) {
-      toast({
-        title: 'Error ' + data.status,
-        description: `Não foi possivel executar sua integração. 😢`,
+    try {
+      const { data } = await sendOctaRequest({
+        url: `validate/webhook`,
+        method: HttpMethod.POST,
+        timeout: 10000,
+        body: {
+          session,
+          webhook: localWebhook,
+        },
       })
-    }
 
-    if (typeof response === 'object') {
-      setTestResponse(JSON.stringify(response, undefined, 2))
-      setResponseKeys(getDeepKeys(response))
-    } else {
-      setTestResponse(response)
+      const { response, success } = data
+
+      setIsTestResponseLoading(false)
+      setSuccessTest(success)
+      setResponseData(data)
+      if (!success) {
+        errorToast({
+          title: 'Código HTTP ' + data.status,
+        })
+      } else {
+        successToast({
+          title: 'Código HTTP ' + data.status,
+        })
+      }
+
+      if (typeof response === 'object') {
+        setTestResponse(JSON.stringify(response, undefined, 2))
+        setResponseKeys(getDeepKeys(response))
+      } else {
+        setTestResponse(response)
+      }
+    } catch (err: any) {
+      if (err?.timeout) {
+        errorToast({
+          title: 'A requisição excedeu o tempo limite',
+          description: `Por favor, tente novamente`,
+        })
+      }
+      clearOptions()
+      setIsTestResponseLoading(false)
     }
   }
 
@@ -341,10 +361,6 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
       <DataVariableInputs {...props} dataItems={responseKeys} />,
     [responseKeys]
   )
-
-  useEffect(() => {
-    console.log('isTestResponseLoading:', isTestResponseLoading)
-  }, [isTestResponseLoading])
 
   return (
     <Stack spacing={4}>
@@ -390,7 +406,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
                 <label>{step.options.url ?? ''}</label>
                 <Textarea
                   placeholder=""
-                  onKeyDown={handleKeyDown}
+                  onKeyDown={handleKeyDown as never}
                   defaultValue={pathPortion ?? ''}
                   handleOpenVariablesSelect={variablesKeyDown}
                   onChange={handlePathChange}
@@ -412,7 +428,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
                 (ex.:https://apiurl.com/<strong>?cep=#cep</strong>)
               </Text>
               <TableList<QueryParameters>
-                initialItems={step.options.parameters}
+                initialItems={step.options.parameters as never}
                 onItemsChange={handleQueryParamsChange}
                 Item={QueryParamsInputs}
                 itemsList={step.options.parameters}
@@ -433,7 +449,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
                 <strong> (ex.: Authorization: Basic 1234)</strong>
               </Text>
               <TableList<QueryParameters>
-                initialItems={step.options.headers}
+                initialItems={step.options.headers as never}
                 onItemsChange={handleHeadersChange}
                 Item={QueryParamsInputs}
                 addLabel="Adicionar parâmetro"
@@ -488,7 +504,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
             </AccordionButton>
             <AccordionPanel pb={4} as={Stack} spacing="6">
               <TableList<VariableForTest>
-                initialItems={step.options?.variablesForTest}
+                initialItems={step.options?.variablesForTest as never}
                 onItemsChange={handleVariablesForTestChange}
                 itemsList={step.options.variablesForTest}
                 Item={VariableForTestInputs}
@@ -511,25 +527,22 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
             Testar requisição
           </Button>
         )}
-        {responseData &&
-          responseData.status &&
-          !isTestResponseLoading &&
-          successTest && (
-            <div
-              style={{
-                backgroundColor: successTest ? '#38cd38' : '#cd3838',
-                color: 'white',
-                padding: '10px',
-                borderRadius: '8px',
-                marginTop: '20px',
-              }}
-            >
-              Código HTTP {responseData.status} -
-              {successTest
-                ? ' A requisição foi bem sucedida'
-                : ' Erro ao realizar requisição'}
-            </div>
-          )}
+        {responseData && responseData.status && !isTestResponseLoading && (
+          <div
+            style={{
+              backgroundColor: successTest ? '#2d8154' : '#cd3838',
+              color: 'white',
+              padding: '10px',
+              borderRadius: '8px',
+              marginTop: '20px',
+            }}
+          >
+            Código HTTP {responseData.status} -
+            {successTest
+              ? ' A requisição foi bem sucedida'
+              : ' Erro ao realizar requisição'}
+          </div>
+        )}
         {testResponse && !isTestResponseLoading && (
           <CodeEditor
             value={testResponse}
@@ -548,7 +561,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
               </AccordionButton>
               <AccordionPanel pb={4} as={Stack} spacing="6">
                 <TableList<ResponseVariableMapping>
-                  initialItems={step.options.responseVariableMapping}
+                  initialItems={step.options.responseVariableMapping as never}
                   onItemsChange={handleResponseMappingChange}
                   Item={ResponseMappingInputs}
                   addLabel="Adicionar variável"

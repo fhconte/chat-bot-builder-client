@@ -48,7 +48,7 @@ import {
   defaultWhatsAppButtonsListOptions,
   defaultMediaBubbleContent,
   defaultCallOtherBotOptions,
-  defaultPreReserveOptions
+  defaultPreReserveOptions,
 } from 'models'
 import { Typebot } from 'models'
 import useSWR from 'swr'
@@ -67,7 +67,12 @@ import {
 } from 'utils'
 import { dequal } from 'dequal'
 import { stringify } from 'qs'
-import { isChoiceInput, isConditionStep, sendRequest, isOctaBubbleStep } from 'utils'
+import {
+  isChoiceInput,
+  isConditionStep,
+  sendRequest,
+  isOctaBubbleStep,
+} from 'utils'
 import cuid from 'cuid'
 import { diff } from 'deep-object-diff'
 import { duplicateWebhook } from 'services/webhook'
@@ -75,7 +80,7 @@ import { Plan } from 'model'
 import { isDefined } from '@chakra-ui/utils'
 import { headers, services, subDomain } from '@octadesk-tech/services'
 import { config } from 'config/octadesk.config'
-import { sendOctaRequest } from 'util/octaRequest'
+import { HttpMethod, sendOctaRequest } from 'util/octaRequest'
 
 export type TypebotInDashboard = Pick<
   Typebot,
@@ -93,7 +98,7 @@ export const useTypebots = ({
   onError: (error: Error) => void
 }) => {
   const params = stringify({ folderId, allFolders, workspaceId })
-  
+
   const { data, error, mutate } = useSWR<
     { typebots: TypebotInDashboard[] },
     Error
@@ -118,7 +123,7 @@ export const createTypebot = async ({
     folderId,
     name: 'My typebot',
     workspaceId,
-    version: 2
+    version: 2,
   }
 
   const response = await sendOctaRequest({
@@ -138,7 +143,7 @@ export const importTypebot = async (typebot: Typebot, userPlan: Plan) => {
   const { data, error } = await sendOctaRequest({
     url: ``,
     method: 'POST',
-    body: { ...newTypebot, version: 2 }
+    body: { ...newTypebot, version: 2 },
   })
 
   if (!data) return { data, error }
@@ -234,11 +239,11 @@ const duplicateTypebot = (
       })),
       settings:
         typebot.settings.general.isBrandingEnabled === false &&
-          userPlan === Plan.FREE
+        userPlan === Plan.FREE
           ? {
-            ...typebot.settings,
-            general: { ...typebot.settings.general, isBrandingEnabled: true },
-          }
+              ...typebot.settings,
+              general: { ...typebot.settings.general, isBrandingEnabled: true },
+            }
           : typebot.settings,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -254,14 +259,15 @@ const generateOldNewIdsMapping = (itemWithId: { id: string }[]) => {
 }
 
 export const getTypebot = async (typebotId: string) => {
-  const { data } = useSWR<
-    { typebot: Typebot },
-    Error
-  >(`/api/typebots/${typebotId}`, fetcher, {
-    dedupingInterval: isNotEmpty(process.env.NEXT_PUBLIC_E2E_TEST)
-      ? 0
-      : undefined,
-  })
+  const { data } = useSWR<{ typebot: Typebot }, Error>(
+    `/api/typebots/${typebotId}`,
+    fetcher,
+    {
+      dedupingInterval: isNotEmpty(process.env.NEXT_PUBLIC_E2E_TEST)
+        ? 0
+        : undefined,
+    }
+  )
 
   return data
 }
@@ -269,20 +275,20 @@ export const getTypebot = async (typebotId: string) => {
 export const deleteTypebot = async (id: string) =>
   sendOctaRequest({
     url: `${config.basePath || ''}/api/typebots/${id}`,
-    method: 'DELETE'
+    method: HttpMethod.DELETE,
   })
 
 export const updateTypebot = async (id: string, typebot: Typebot) =>
-sendOctaRequest({
+  sendOctaRequest({
     url: `${id}`,
-    method: 'PUT',
-    body:{ bot: typebot },
+    method: HttpMethod.PUT,
+    body: { bot: typebot },
   })
 
 export const patchTypebot = async (id: string, typebot: Partial<Typebot>) =>
-sendOctaRequest({
+  sendOctaRequest({
     url: `${id}`,
-    method: 'PATCH',
+    method: HttpMethod.PATCH,
     body: { bot: typebot },
   })
 
@@ -295,14 +301,15 @@ export const parseNewStep = (
     id,
     blockId,
     type,
-    content: isBubbleStepType(type) || isOctaBubbleStepType(type)
-      ? parseDefaultContent(type)
-      : undefined,
+    content:
+      isBubbleStepType(type) || isOctaBubbleStepType(type)
+        ? parseDefaultContent(type)
+        : undefined,
     options: isOctaStepType(type)
       ? parseOctaStepOptions(type)
       : stepTypeHasOption(type)
-        ? parseDefaultStepOptions(type)
-        : undefined,
+      ? parseDefaultStepOptions(type)
+      : undefined,
     webhookId: stepTypeHasWebhook(type) ? cuid() : undefined,
     items: stepTypeHasItems(type) ? parseDefaultItems(type, id) : undefined,
   } as DraggableStep
@@ -327,7 +334,9 @@ const parseDefaultItems = (
   }
 }
 
-const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType): BubbleStepContent | null => {
+const parseDefaultContent = (
+  type: BubbleStepType | OctaBubbleStepType
+): BubbleStepContent | null => {
   switch (type) {
     case BubbleStepType.TEXT:
       return defaultTextBubbleContent
@@ -344,7 +353,9 @@ const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType): BubbleS
   }
 }
 
-const parseOctaStepOptions = (type: OctaStepType | OctaWabaStepType): OctaStepOptions | OctaWabaStepOptions | null => {
+const parseOctaStepOptions = (
+  type: OctaStepType | OctaWabaStepType
+): OctaStepOptions | OctaWabaStepOptions | null => {
   switch (type) {
     case OctaStepType.ASSIGN_TO_TEAM:
       return defaultAssignToTeamOptions
@@ -363,7 +374,9 @@ const parseOctaStepOptions = (type: OctaStepType | OctaWabaStepType): OctaStepOp
   }
 }
 
-const parseDefaultStepOptions = (type: StepWithOptionsType): StepOptions | null => {
+const parseDefaultStepOptions = (
+  type: StepWithOptionsType
+): StepOptions | null => {
   switch (type) {
     case InputStepType.TEXT:
       return defaultGenericInputOptions

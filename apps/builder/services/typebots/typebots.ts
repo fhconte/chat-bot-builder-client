@@ -71,7 +71,12 @@ import {
 } from 'utils'
 import { dequal } from 'dequal'
 import { stringify } from 'qs'
-import { isChoiceInput, isConditionStep, sendRequest, isOctaBubbleStep } from 'utils'
+import {
+  isChoiceInput,
+  isConditionStep,
+  sendRequest,
+  isOctaBubbleStep,
+} from 'utils'
 import cuid from 'cuid'
 import { diff } from 'deep-object-diff'
 import { duplicateWebhook } from 'services/webhook'
@@ -79,7 +84,7 @@ import { Plan } from 'model'
 import { isDefined } from '@chakra-ui/utils'
 import { headers, services, subDomain } from '@octadesk-tech/services'
 import { config } from 'config/octadesk.config'
-import { sendOctaRequest } from 'util/octaRequest'
+import { sendOctaRequest, HttpMethod } from 'util/octaRequest'
 
 export type TypebotInDashboard = Pick<
   Typebot,
@@ -200,7 +205,7 @@ const duplicateTypebot = (
               },
             }
           if (stepHasItems(s)) {
-            return ({
+            return {
               ...s,
               items: s.items.map((item) => ({
                 ...item,
@@ -209,7 +214,12 @@ const duplicateTypebot = (
                   : undefined,
               })),
               ...newIds,
-            } as ChoiceInputStep | ConditionStep | OfficeHourStep | WhatsAppOptionsListStep | WhatsAppButtonsListStep)
+            } as
+              | ChoiceInputStep
+              | ConditionStep
+              | OfficeHourStep
+              | WhatsAppOptionsListStep
+              | WhatsAppButtonsListStep
           }
 
           if (isWebhookStep(s)) {
@@ -236,11 +246,11 @@ const duplicateTypebot = (
       })),
       settings:
         typebot.settings.general.isBrandingEnabled === false &&
-          userPlan === Plan.FREE
+        userPlan === Plan.FREE
           ? {
-            ...typebot.settings,
-            general: { ...typebot.settings.general, isBrandingEnabled: true },
-          }
+              ...typebot.settings,
+              general: { ...typebot.settings.general, isBrandingEnabled: true },
+            }
           : typebot.settings,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -256,14 +266,15 @@ const generateOldNewIdsMapping = (itemWithId: { id: string }[]) => {
 }
 
 export const getTypebot = async (typebotId: string) => {
-  const { data } = useSWR<
-    { typebot: Typebot },
-    Error
-  >(`/api/typebots/${typebotId}`, fetcher, {
-    dedupingInterval: isNotEmpty(process.env.NEXT_PUBLIC_E2E_TEST)
-      ? 0
-      : undefined,
-  })
+  const { data } = useSWR<{ typebot: Typebot }, Error>(
+    `/api/typebots/${typebotId}`,
+    fetcher,
+    {
+      dedupingInterval: isNotEmpty(process.env.NEXT_PUBLIC_E2E_TEST)
+        ? 0
+        : undefined,
+    }
+  )
 
   return data
 }
@@ -271,46 +282,53 @@ export const getTypebot = async (typebotId: string) => {
 export const deleteTypebot = async (id: string) =>
   sendOctaRequest({
     url: ``,
-    method: 'DELETE',
+    method: HttpMethod.DELETE,
   })
 
 export const updateTypebot = async (id: string, typebot: Typebot) =>
   sendOctaRequest({
     url: `${id}`,
-    method: 'PUT',
+    method: HttpMethod.PUT,
     body: { bot: typebot },
   })
 
 export const patchTypebot = async (id: string, typebot: Partial<Typebot>) =>
   sendOctaRequest({
     url: `${id}`,
-    method: 'PATCH',
+    method: HttpMethod.PATCH,
     body: { bot: typebot },
   })
 
 export const parseNewStep = (
   type: DraggableStepType,
   blockId: string
-): DraggableStep => {  
+): DraggableStep => {
   const id = cuid()
   return {
     id,
     blockId,
     type,
-    content: isBubbleStepType(type) || isOctaBubbleStepType(type)
-      ? parseDefaultContent(type)
-      : undefined,
+    content:
+      isBubbleStepType(type) || isOctaBubbleStepType(type)
+        ? parseDefaultContent(type)
+        : undefined,
     options: isOctaStepType(type)
       ? parseOctaStepOptions(type)
       : stepTypeHasOption(type)
-        ? parseDefaultStepOptions(type)
-        : undefined, 
+      ? parseDefaultStepOptions(type)
+      : undefined,
     items: stepTypeHasItems(type) ? parseDefaultItems(type, id) : undefined,
   } as DraggableStep
 }
 
 const parseDefaultItems = (
-  type: LogicStepType.CONDITION | InputStepType.CHOICE | OctaStepType.OFFICE_HOURS | IntegrationStepType.WEBHOOK | OctaWabaStepType.WHATSAPP_OPTIONS_LIST | OctaWabaStepType.WHATSAPP_BUTTONS_LIST,
+  type:
+    | LogicStepType.CONDITION
+    | InputStepType.CHOICE
+    | OctaStepType.OFFICE_HOURS
+    | IntegrationStepType.WEBHOOK
+    | OctaWabaStepType.WHATSAPP_OPTIONS_LIST
+    | OctaWabaStepType.WHATSAPP_BUTTONS_LIST,
   stepId: string
 ): Item[] => {
   switch (type) {
@@ -350,66 +368,68 @@ const parseDefaultItems = (
           stepId,
           type: ItemType.OFFICE_HOURS,
           content: {
-            matchType: "$eq",
-            referenceProperty: "",
+            matchType: '$eq',
+            referenceProperty: '',
             referenceValue: null,
-            source: "",
+            source: '',
             subType: null,
-            values: ["@OFFICE_HOURS_TRUE"]
-          }
+            values: ['@OFFICE_HOURS_TRUE'],
+          },
         },
         {
           id: cuid(),
           stepId,
           type: ItemType.OFFICE_HOURS,
           content: {
-            matchType: "$eq",
-            referenceProperty: "",
+            matchType: '$eq',
+            referenceProperty: '',
             referenceValue: null,
-            source: "",
+            source: '',
             subType: null,
-            values: ["@OFFICE_HOURS_FALSE"]
-          }
-        }
+            values: ['@OFFICE_HOURS_FALSE'],
+          },
+        },
       ]
-      case IntegrationStepType.WEBHOOK:
-        return [
-          {
+    case IntegrationStepType.WEBHOOK:
+      return [
+        {
           id: cuid(),
           stepId,
           type: ItemType.WEBHOOK,
           content: {
-            matchType: "$eq",
+            matchType: '$eq',
             referenceProperty: null,
             referenceValue: null,
-            source: "CURRENT_SESSION",
+            source: 'CURRENT_SESSION',
             subType: null,
-            values: ["@HTTP_STATUS_CODE_SUCCESS"]
-          }
+            values: ['@HTTP_STATUS_CODE_SUCCESS'],
+          },
         },
         {
           id: cuid(),
           stepId,
           type: ItemType.WEBHOOK,
           content: {
-            matchType: "$eq",
+            matchType: '$eq',
             referenceProperty: null,
             referenceValue: null,
-            source: "CURRENT_SESSION",
+            source: 'CURRENT_SESSION',
             subType: null,
             values: [
-              "@HTTP_STATUS_CODE_CLIENT_ERROR",
-              "@HTTP_STATUS_CODE_SERVER_ERROR",
-              "@HTTP_STATUS_CODE_REDIRECT",
-              "@HTTP_STATUS_CODE_INFORMATION"
-            ]
-          }
-        }
+              '@HTTP_STATUS_CODE_CLIENT_ERROR',
+              '@HTTP_STATUS_CODE_SERVER_ERROR',
+              '@HTTP_STATUS_CODE_REDIRECT',
+              '@HTTP_STATUS_CODE_INFORMATION',
+            ],
+          },
+        },
       ]
   }
 }
 
-const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType | OctaWabaStepType): BubbleStepContent | null => {
+const parseDefaultContent = (
+  type: BubbleStepType | OctaBubbleStepType | OctaWabaStepType
+): BubbleStepContent | null => {
   switch (type) {
     case BubbleStepType.TEXT:
       return defaultTextBubbleContent
@@ -428,7 +448,9 @@ const parseDefaultContent = (type: BubbleStepType | OctaBubbleStepType | OctaWab
   }
 }
 
-const parseOctaStepOptions = (type: OctaStepType | OctaWabaStepType): OctaStepOptions | OctaWabaStepOptions | null => {
+const parseOctaStepOptions = (
+  type: OctaStepType | OctaWabaStepType
+): OctaStepOptions | OctaWabaStepOptions | null => {
   switch (type) {
     case OctaStepType.ASSIGN_TO_TEAM:
       return defaultAssignToTeamOptions
@@ -449,7 +471,9 @@ const parseOctaStepOptions = (type: OctaStepType | OctaWabaStepType): OctaStepOp
   }
 }
 
-const parseDefaultStepOptions = (type: StepWithOptionsType): StepOptions | null => {
+const parseDefaultStepOptions = (
+  type: StepWithOptionsType
+): StepOptions | null => {
   switch (type) {
     case InputStepType.TEXT:
       return defaultGenericInputOptions
