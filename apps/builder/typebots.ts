@@ -49,6 +49,9 @@ import {
   defaultMediaBubbleContent,
   defaultCallOtherBotOptions,
   defaultPreReserveOptions,
+  defaultWOZSuggestionOptions,
+  WOZStepType,
+  WOZSuggestionOptions,
 } from 'models'
 import { Typebot } from 'models'
 import useSWR from 'swr'
@@ -64,6 +67,7 @@ import {
   stepTypeHasItems,
   stepTypeHasOption,
   stepTypeHasWebhook,
+  isWOZStepType,
 } from 'utils'
 import { dequal } from 'dequal'
 import { stringify } from 'qs'
@@ -297,6 +301,14 @@ export const parseNewStep = (
   blockId: string
 ): DraggableStep => {
   const id = cuid()
+
+  const options =
+    isOctaStepType(type) || isWOZStepType(type)
+      ? parseOctaStepOptions(type)
+      : stepTypeHasOption(type)
+      ? parseDefaultStepOptions(type)
+      : undefined
+
   return {
     id,
     blockId,
@@ -305,11 +317,7 @@ export const parseNewStep = (
       isBubbleStepType(type) || isOctaBubbleStepType(type)
         ? parseDefaultContent(type)
         : undefined,
-    options: isOctaStepType(type)
-      ? parseOctaStepOptions(type)
-      : stepTypeHasOption(type)
-      ? parseDefaultStepOptions(type)
-      : undefined,
+    options,
     webhookId: stepTypeHasWebhook(type) ? cuid() : undefined,
     items: stepTypeHasItems(type) ? parseDefaultItems(type, id) : undefined,
   } as DraggableStep
@@ -354,8 +362,8 @@ const parseDefaultContent = (
 }
 
 const parseOctaStepOptions = (
-  type: OctaStepType | OctaWabaStepType
-): OctaStepOptions | OctaWabaStepOptions | null => {
+  type: OctaStepType | OctaWabaStepType | WOZStepType
+): OctaStepOptions | OctaWabaStepOptions | WOZSuggestionOptions | null => {
   switch (type) {
     case OctaStepType.ASSIGN_TO_TEAM:
       return defaultAssignToTeamOptions
@@ -369,6 +377,8 @@ const parseOctaStepOptions = (
       return defaultWhatsAppButtonsListOptions
     case OctaStepType.PRE_RESERVE:
       return defaultPreReserveOptions
+    case WOZStepType.MESSAGE:
+      return defaultWOZSuggestionOptions
     default:
       return null
   }
