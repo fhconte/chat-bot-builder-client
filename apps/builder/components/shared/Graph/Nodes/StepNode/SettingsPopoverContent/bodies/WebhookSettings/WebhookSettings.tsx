@@ -515,15 +515,6 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
             Testar requisição
           </Button>
         )}
-        {testResponse && !isTestResponseLoading && (
-          <CodeEditor
-            value={testResponse}
-            defaultValue={'{}'}
-            lang="json"
-            isReadOnly
-            debounceTimeout={0}
-          />
-        )}
         {responseData && responseData.status && !isTestResponseLoading && (
           <div
             style={{
@@ -538,6 +529,15 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
               ? 'A requisição foi bem sucedida'
               : `Erro: ${responseData.status} - Não foi possível executar sua integração.`}
           </div>
+        )}
+        {testResponse && !isTestResponseLoading && (
+          <CodeEditor
+            value={testResponse}
+            defaultValue={'{}'}
+            lang="json"
+            isReadOnly
+            debounceTimeout={0}
+          />
         )}
         {successTest && !isTestResponseLoading && (
           <Accordion allowToggle allowMultiple>
