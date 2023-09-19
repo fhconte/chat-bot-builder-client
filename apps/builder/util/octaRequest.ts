@@ -1,66 +1,20 @@
 import { headers, services } from '@octadesk-tech/services'
 
-enum HttpMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
-}
-
-interface OctaRequest {
+const sendOctaRequest = async (request: {
   url: string
-  method: HttpMethod
-  body?: unknown
-  timeout?: number
-}
-
-type OctaResponse = unknown
-
-const TIMEOUT_DURATION = 30000
-
-const sendOctaRequest = async (request: OctaRequest): Promise<OctaResponse> => {
+  method: string
+  body?: any | undefined
+}): Promise<any> => {
   const client = await services.chatBots.getClient()
   const authorationHeaders = headers.getAuthorizedHeaders()
+  if (request.method === 'PUT' || request.method === 'PATCH')
+    return client.put(request.url, request.body, authorationHeaders)
 
-  const timeout = new Promise<never>((_, reject) =>
-    setTimeout(
-      () => reject({ timeout: true }),
-      request.timeout ?? TIMEOUT_DURATION
-    )
-  )
+  if (request.method === 'POST')
+    return client.post(request.url, request.body, authorationHeaders)
 
-  let requestPromise: Promise<OctaResponse>
-
-  switch (request.method) {
-    case HttpMethod.GET:
-      requestPromise = client.get(request.url, authorationHeaders)
-      break
-    case HttpMethod.POST:
-      requestPromise = client.post(
-        request.url,
-        request.body,
-        authorationHeaders
-      )
-      break
-    case HttpMethod.PUT:
-      requestPromise = client.put(request.url, request.body, authorationHeaders)
-      break
-    case HttpMethod.PATCH:
-      requestPromise = client.patch(
-        request.url,
-        request.body,
-        authorationHeaders
-      )
-      break
-    case HttpMethod.DELETE:
-      requestPromise = client.delete(request.url, authorationHeaders)
-      break
-    default:
-      throw new Error(`Unsupported HTTP method: ${request.method}`)
-  }
-
-  return Promise.race([requestPromise, timeout])
+  if (request.method === 'DELETE')
+    return client.delete(request.url, authorationHeaders)
 }
 
-export { sendOctaRequest, HttpMethod }
+export { sendOctaRequest }

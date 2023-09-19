@@ -84,7 +84,7 @@ import { Plan } from 'model'
 import { isDefined } from '@chakra-ui/utils'
 import { headers, services, subDomain } from '@octadesk-tech/services'
 import { config } from 'config/octadesk.config'
-import { sendOctaRequest, HttpMethod } from 'util/octaRequest'
+import { sendOctaRequest } from 'util/octaRequest'
 
 export type TypebotInDashboard = Pick<
   Typebot,
@@ -282,20 +282,20 @@ export const getTypebot = async (typebotId: string) => {
 export const deleteTypebot = async (id: string) =>
   sendOctaRequest({
     url: ``,
-    method: HttpMethod.DELETE,
+    method: 'DELETE',
   })
 
 export const updateTypebot = async (id: string, typebot: Typebot) =>
   sendOctaRequest({
     url: `${id}`,
-    method: HttpMethod.PUT,
+    method: 'PUT',
     body: { bot: typebot },
   })
 
 export const patchTypebot = async (id: string, typebot: Partial<Typebot>) =>
   sendOctaRequest({
     url: `${id}`,
-    method: HttpMethod.PATCH,
+    method: 'PATCH',
     body: { bot: typebot },
   })
 

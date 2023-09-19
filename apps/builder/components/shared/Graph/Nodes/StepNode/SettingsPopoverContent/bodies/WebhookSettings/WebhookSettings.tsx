@@ -31,7 +31,7 @@ import { getDeepKeys } from 'services/integrations'
 import { VariableForTestInputs } from './VariableForTestInputs'
 import { DataVariableInputs } from './ResponseMappingInputs'
 import { SwitchWithLabel } from 'components/shared/SwitchWithLabel'
-import { sendOctaRequest, HttpMethod } from 'util/octaRequest'
+import { sendOctaRequest } from 'util/octaRequest'
 import { QueryParamsInputs } from './KeyValueInputs'
 import { Input, Textarea } from 'components/shared/Textbox'
 
@@ -312,47 +312,35 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
 
     const session = resolveSession(options.variablesForTest, typebot.variables)
 
-    try {
-      const { data } = await sendOctaRequest({
-        url: `validate/webhook`,
-        method: HttpMethod.POST,
-        timeout: 10000,
-        body: {
-          session,
-          webhook: localWebhook,
-        },
+    const { data } = await sendOctaRequest({
+      url: `validate/webhook`,
+      method: 'POST',
+      body: {
+        session,
+        webhook: localWebhook,
+      },
+    })
+
+    const { response, success } = data
+
+    setIsTestResponseLoading(false)
+    setSuccessTest(success)
+    setResponseData(data)
+    if (!success) {
+      errorToast({
+        title: 'Não foi possível executar sua integração.',
       })
+    } else {
+      successToast({
+        title: 'Sua integração está funcionando!',
+      })
+    }
 
-      const { response, success } = data
-
-      setIsTestResponseLoading(false)
-      setSuccessTest(success)
-      setResponseData(data)
-      if (!success) {
-        errorToast({
-          title: 'Código HTTP ' + data.status,
-        })
-      } else {
-        successToast({
-          title: 'Código HTTP ' + data.status,
-        })
-      }
-
-      if (typeof response === 'object') {
-        setTestResponse(JSON.stringify(response, undefined, 2))
-        setResponseKeys(getDeepKeys(response))
-      } else {
-        setTestResponse(response)
-      }
-    } catch (err: any) {
-      if (err?.timeout) {
-        errorToast({
-          title: 'A requisição excedeu o tempo limite',
-          description: `Por favor, tente novamente`,
-        })
-      }
-      clearOptions()
-      setIsTestResponseLoading(false)
+    if (typeof response === 'object') {
+      setTestResponse(JSON.stringify(response, undefined, 2))
+      setResponseKeys(getDeepKeys(response))
+    } else {
+      setTestResponse(response)
     }
   }
 
@@ -527,6 +515,15 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
             Testar requisição
           </Button>
         )}
+        {testResponse && !isTestResponseLoading && (
+          <CodeEditor
+            value={testResponse}
+            defaultValue={'{}'}
+            lang="json"
+            isReadOnly
+            debounceTimeout={0}
+          />
+        )}
         {responseData && responseData.status && !isTestResponseLoading && (
           <div
             style={{
@@ -537,20 +534,10 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
               marginTop: '20px',
             }}
           >
-            Código HTTP {responseData.status} -
             {successTest
-              ? ' A requisição foi bem sucedida'
-              : ' Erro ao realizar requisição'}
+              ? 'A requisição foi bem sucedida'
+              : `Erro: ${responseData.status} - Não foi possível executar sua integração.`}
           </div>
-        )}
-        {testResponse && !isTestResponseLoading && (
-          <CodeEditor
-            value={testResponse}
-            defaultValue={'{}'}
-            lang="json"
-            isReadOnly
-            debounceTimeout={0}
-          />
         )}
         {successTest && !isTestResponseLoading && (
           <Accordion allowToggle allowMultiple>
