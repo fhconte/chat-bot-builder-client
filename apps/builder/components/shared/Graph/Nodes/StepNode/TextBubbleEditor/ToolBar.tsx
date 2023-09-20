@@ -14,8 +14,8 @@ import {
   ItalicIcon,
   UnderlineIcon,
   LinkIcon,
-  EmojiIcon,
   StrikethroughIcon,
+  EmojiIcon,
 } from 'assets/icons'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
