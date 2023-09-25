@@ -122,18 +122,23 @@ export const ItemNodesList = ({
   }
 
   const getWebhookDetails = () => {
-    const headers = {}
+    try {
+        const headers = {};
 
-    typebot?.blocks[blockIndex]?.steps[stepIndex]?.options?.headers.map(header => {
-      headers[header.key] = header.value
-    })
+        typebot?.blocks[blockIndex]?.steps[stepIndex]?.options?.headers.map(header => {
+          headers[header.key] = header.value
+        })
 
-    const jsonPreview = {
-          headers,
-          body: JSON.parse(typebot?.blocks[blockIndex]?.steps[stepIndex]?.options?.body)
-        }
+        const jsonPreview = {
+              headers,
+              body: JSON.parse(typebot?.blocks[blockIndex]?.steps[stepIndex]?.options?.body)
+            }
 
-    return JSON.stringify(jsonPreview, undefined, 2);
+        return JSON.stringify(jsonPreview ?? '{}', undefined, 2);
+
+      } catch {
+        return 'Is not valid JSON';
+      }
   }
 
   return (
