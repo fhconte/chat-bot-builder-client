@@ -34,7 +34,8 @@ export const WhatsAppButtonsNodeContent = ({
   useEffect(() => {
     if (itemValue !== item.content)
       setItemValue(item.content ?? 'Clique para editar')
-  }, [item, itemValue])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item])
 
   const handleInputSubmit = () => {
     if (itemValue === '') deleteItem(indices)
@@ -75,7 +76,7 @@ export const WhatsAppButtonsNodeContent = ({
       <Editable
         ref={editableRef}
         startWithEditView={isNotDefined(item.content)}
-        value={itemValue as string | undefined}
+        value={itemValue}
         onChange={setItemValue}
         onSubmit={handleInputSubmit}
         onKeyDownCapture={handleKeyPress}
