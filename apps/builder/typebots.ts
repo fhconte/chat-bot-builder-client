@@ -52,6 +52,8 @@ import {
   defaultWOZSuggestionOptions,
   WOZStepType,
   WOZSuggestionOptions,
+  ConversationTagOptions,
+  defaultConversationTagOptions
 } from 'models'
 import { Typebot } from 'models'
 import useSWR from 'swr'
@@ -361,9 +363,7 @@ const parseDefaultContent = (
   }
 }
 
-const parseOctaStepOptions = (
-  type: OctaStepType | OctaWabaStepType | WOZStepType
-): OctaStepOptions | OctaWabaStepOptions | WOZSuggestionOptions | null => {
+const parseOctaStepOptions = (type: OctaStepType | OctaWabaStepType | WOZStepType): OctaStepOptions | OctaWabaStepOptions | WOZSuggestionOptions | ConversationTagOptions | null => {
   switch (type) {
     case OctaStepType.ASSIGN_TO_TEAM:
       return defaultAssignToTeamOptions
@@ -379,6 +379,8 @@ const parseOctaStepOptions = (
       return defaultPreReserveOptions
     case WOZStepType.MESSAGE:
       return defaultWOZSuggestionOptions
+    case OctaStepType.CONVERSATION_TAG:
+      return defaultConversationTagOptions      
     default:
       return null
   }
