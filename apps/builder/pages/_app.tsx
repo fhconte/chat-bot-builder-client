@@ -29,6 +29,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
   const [typebotId, setTypebotId] = useState(query.typebotId?.toString())
 
   useEffect(() => {
+    setIsLoaded(false)
     if (query.typebotId) setTypebotId(query.typebotId?.toString())
 
     pathname.endsWith('/edit')
