@@ -66,17 +66,17 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
   const getHttpMethodDescription = (method: HttpMethodsWebhook) => {
     switch (method) {
       case HttpMethodsWebhook.GET:
-        return 'Buscar ou consultar uma informação';
+        return 'Buscar ou consultar uma informação'
       case HttpMethodsWebhook.POST:
-        return 'Enviar uma nova informação';
+        return 'Enviar uma nova informação'
       case HttpMethodsWebhook.PUT:
-        return 'Atualizar uma informação existente';
+        return 'Atualizar uma informação existente'
       case HttpMethodsWebhook.DELETE:
-        return 'Apagar uma informação existente';
+        return 'Apagar uma informação existente'
       case HttpMethodsWebhook.PATCH:
-        return 'Atualizar uma informação existente, enviando somente o necessário';
+        return 'Atualizar uma informação existente, enviando somente o necessário'
       case HttpMethodsWebhook.OPTIONS:
-        return 'Descobrir quais tipos de requisições são permitidas';    
+        return 'Descobrir quais tipos de requisições são permitidas'
     }
   }
 
@@ -374,7 +374,7 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
         </HStack>
         <HStack justify="space-between">
           <Text color="gray.400" fontSize="sm">
-              {getHttpMethodDescription(step.options.method)}
+            {getHttpMethodDescription(step.options.method)}
           </Text>
         </HStack>
         <Accordion allowToggle allowMultiple defaultIndex={[0, 1, 2, 3, 4]}>
@@ -477,11 +477,14 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
                 {(step.options.isCustomBody ?? true) && (
                   <Stack>
                     <Text color="gray.500" fontSize="sm">
-                      Envie sua informação na corpo da integração <i>Request Body</i> (apenas JSON)
+                      Envie sua informação na corpo da integração{' '}
+                      <i>Request Body</i> (apenas JSON)
                     </Text>
                     <Text color="gray.500" fontSize="xs">
-                      <strong>Digite # para inserir campos personalizados</strong>
-                    </Text>                   
+                      <strong>
+                        Digite # para inserir campos personalizados
+                      </strong>
+                    </Text>
                     <OpenEditorBody
                       value={step.options.body ?? '{}'}
                       lang="json"

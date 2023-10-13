@@ -320,6 +320,7 @@ export const parseNewStep = (
         ? parseDefaultContent(type)
         : undefined,
     options,
+
     webhookId: stepTypeHasWebhook(type) ? cuid() : undefined,
     items: stepTypeHasItems(type) ? parseDefaultItems(type, id) : undefined,
   } as DraggableStep

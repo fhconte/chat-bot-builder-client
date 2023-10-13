@@ -1,5 +1,9 @@
-import { StepIndices, WhatsAppOptionsListStep } from 'models'
-import React from 'react'
+import {
+  StepIndices,
+  WhatsAppOptionsListStep,
+  defaultWhatsAppOptionsListOptions,
+} from 'models'
+import React, { useEffect } from 'react'
 import { ItemNodesList } from 'components/shared/Graph/Nodes/ItemNode'
 import { Stack } from '@chakra-ui/react'
 import { WithVariableContent } from '../../WithVariableContent'
@@ -12,22 +16,25 @@ type Props = {
 }
 
 const WhatsAppOptionsContent = ({ step, indices }: Props) => {
+  useEffect(() => {
+    if (!step.options) step.options = defaultWhatsAppOptionsListOptions
+  }, [step])
   return (
     <Stack>
       <TextHtmlContent
         html={step?.options?.header?.content?.html}
         fontSize="xl"
-        defaultPlaceholder="Lista de opções"
-      />
-      <TextHtmlContent
-        html={step?.options?.body?.content?.html}
-        defaultPlaceholder="Pergunta com lista de opções"
-      />
-      <TextHtmlContent
-        html={step?.options?.listTitle?.content?.html}
         renderIfEmpty={false}
       />
+
+      {/* Campo obrigatório body */}
+      <TextHtmlContent html={step.options?.body?.content?.html} />
+
+      {/* Campo obrigatório listTitle */}
+      <TextHtmlContent html={step?.options?.listTitle?.content?.html} />
+
       <ItemNodesList step={step} indices={indices} />
+
       <TextHtmlContent
         html={step?.options?.footer?.content?.html}
         renderIfEmpty={false}
