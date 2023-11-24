@@ -63,7 +63,7 @@ export enum ComparisonOperators {
   CONTAINS = 'Contém',
   GREATER = 'Maior que',
   LESS = 'Menor que',
-  IS_SET = 'Está configurado',
+  //IS_SET = 'Está configurado',
 }
 
 export type ConditionContent = {
@@ -103,7 +103,7 @@ export const defaultSetVariablesOptions: SetVariableOptions = {}
 
 export const defaultConditionContent: ConditionContent = {
   comparisons: [],
-  logicalOperator: LogicalOperator.AND,
+  logicalOperator: 'AND' as LogicalOperator,
 }
 
 export const defaultRedirectOptions: RedirectOptions = { isNewTab: false }
