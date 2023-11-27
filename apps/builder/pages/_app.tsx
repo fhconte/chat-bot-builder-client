@@ -34,7 +34,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
       ? (document.body.style.overflow = 'hidden')
       : (document.body.style.overflow = 'auto')
 
-    //setupEnvironment()
+    setupEnvironment()
 
     setupMockUser().then(() => {
       setIsLoaded(true)
