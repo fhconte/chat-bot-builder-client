@@ -58,7 +58,6 @@ export const OpenEditorBody = ({
             onChange={onChange}
             postVariableSelected={postVariableSelected}
             debounceTimeout={0}
-            withVariableButton={props.withVariableButton}
           />
           </ModalBody>
         </ModalContent>

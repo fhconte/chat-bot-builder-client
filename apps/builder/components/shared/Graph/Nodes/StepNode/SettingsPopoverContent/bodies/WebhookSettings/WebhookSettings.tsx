@@ -476,19 +476,16 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
                 />
                 {(step.options.isCustomBody ?? true) && (
                   <Stack>
-                    <Text color="gray.500" fontSize="sm">
-                      Envie sua informação na corpo da integração <i>Request Body</i> (apenas JSON)
-                    </Text>
-                    <Text color="gray.500" fontSize="xs">
-                      <strong>Digite # para inserir campos personalizados</strong>
-                    </Text>
+                    <text color="gray.500" fontSize="sm">
+                      Envie sua informação na corpo da integração{' '}
+                      <i>Request Body</i> (apenas JSON)
+                    </text>
                     <OpenEditorBody
                       value={step.options.body ?? '{}'}
                       lang="json"
                       onChange={handleBodyChange}
                       postVariableSelected={codeVariableSelected}
                       debounceTimeout={0}
-                      withVariableButton={false}
                     />
                     <CodeEditor
                       value={step.options.body ?? '{}'}
@@ -497,7 +494,6 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
                       onChange={handleBodyChange}
                       postVariableSelected={codeVariableSelected}
                       debounceTimeout={0}
-                      withVariableButton={false}
                     />
                   </Stack>
                 )}
