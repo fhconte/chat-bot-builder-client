@@ -1,5 +1,5 @@
+import React, { useMemo, useRef, useState } from 'react'
 import { Flex, Stack, useOutsideClick } from '@chakra-ui/react'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Plate,
   selectEditor,
@@ -11,17 +11,18 @@ import {
 } from '@udecode/plate-core'
 import { editorStyle, platePlugins } from 'libs/plate'
 import { BaseEditor, BaseSelection, createEditor, Transforms } from 'slate'
-import { ToolBar } from './ToolBar'
-import { parseHtmlStringToPlainText } from 'services/utils'
-import { defaultTextBubbleContent, TextBubbleContent, Variable } from 'models'
-import { VariableSearchInput } from 'components/shared/VariableSearchInput/VariableSearchInput'
 import { ReactEditor } from 'slate-react'
+import { defaultTextBubbleContent, TextBubbleContent, Variable } from 'models'
+import { parseHtmlStringToPlainText } from 'services/utils'
+import { VariableSearchInput } from 'components/shared/VariableSearchInput/VariableSearchInput'
+import { ToolBar } from './ToolBar'
 
-type Props = {
+type TextBubbleEditorProps = {
   initialValue: TElement[]
   onClose: (newContent: TextBubbleContent) => void
   onKeyUp?: (newContent: TextBubbleContent) => void
   increment?: number
+  maxLength?: number
 }
 
 export const TextBubbleEditor = ({
@@ -29,11 +30,21 @@ export const TextBubbleEditor = ({
   onClose,
   onKeyUp,
   increment,
-}: Props) => {
+  maxLength,
+}: TextBubbleEditorProps) => {
+  const [value, setValue] = useState(initialValue)
+  const [isVariableDropdownOpen, setIsVariableDropdownOpen] = useState(false)
+  const varDropdownRef = useRef<HTMLDivElement | null>(null)
+  const rememberedSelection = useRef<BaseSelection | null>(null)
+  const textEditorRef = useRef<HTMLDivElement>(null)
+
+  // useEffect(() => console.log(maxLength, value), [maxLength, value])
+
   const randomEditorId = useMemo(
     () => `${Math.random().toString()}${increment ? `-${increment}` : ''}`,
     [increment]
   )
+
   const editor = useMemo(
     () =>
       withPlate(createEditor() as TEditor<Value>, {
@@ -43,12 +54,6 @@ export const TextBubbleEditor = ({
     [randomEditorId]
   )
 
-  const [value, setValue] = useState(initialValue)
-  const varDropdownRef = useRef<HTMLDivElement | null>(null)
-  const rememberedSelection = useRef<BaseSelection | null>(null)
-  const [isVariableDropdownOpen, setIsVariableDropdownOpen] = useState(false)
-
-  const textEditorRef = useRef<HTMLDivElement>(null)
   const closeEditor = () => {
     if (onClose) onClose(convertValueToStepContent(value))
   }
@@ -74,6 +79,12 @@ export const TextBubbleEditor = ({
     }
   }
 
+  const getPlainTextValue = (val: TElement[]) => {
+    return convertValueToStepContent(val).plainText
+  }
+
+  const textLength = getPlainTextValue(value).length ?? 0
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation()
   }
@@ -94,13 +105,19 @@ export const TextBubbleEditor = ({
   }
 
   const handleChangeEditorContent = (val: TElement[]) => {
+    // if (maxLength && val && getPlainTextValue(val).length > maxLength) {
+    //   console.log('handleChangeEditorContent')
+    // }
+
     const timeout = setTimeout(() => {
       if (timeout) clearTimeout(timeout)
       setValue(val)
       keyUpEditor(val)
     }, 250)
+
     setIsVariableDropdownOpen(false)
   }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.shiftKey) return
     if (e.key === 'Enter') closeEditor()
@@ -118,6 +135,13 @@ export const TextBubbleEditor = ({
       spacing={0}
       cursor="text"
     >
+      {maxLength && (
+        <Stack pos="absolute" top="-33px" right="0" fontWeight="light">
+          <div>
+            {textLength}/{maxLength}
+          </div>
+        </Stack>
+      )}
       <ToolBar
         editor={editor}
         onVariablesButtonClick={(showDialog) => {
@@ -130,6 +154,15 @@ export const TextBubbleEditor = ({
         editableProps={{
           style: editorStyle,
           autoFocus: true,
+          maxLength: maxLength,
+          onDOMBeforeInput: (event) => {
+            if (event.inputType === 'insertText') {
+              const target = event?.target as HTMLElement
+              if (maxLength && target.innerText.length >= maxLength) {
+                event.preventDefault()
+              }
+            }
+          },
           onFocus: () => {
             if (editor.children.length === 0) return
             selectEditor(editor, {

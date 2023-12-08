@@ -491,7 +491,6 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
                       onChange={handleBodyChange}
                       postVariableSelected={codeVariableSelected}
                       debounceTimeout={0}
-                      withVariableButton={false}
                     />
                     <CodeEditor
                       value={step.options.body ?? '{}'}
@@ -500,7 +499,6 @@ export const WebhookSettings = ({ step, onOptionsChange }: Props) => {
                       onChange={handleBodyChange}
                       postVariableSelected={codeVariableSelected}
                       debounceTimeout={0}
-                      withVariableButton={false}
                     />
                   </Stack>
                 )}
