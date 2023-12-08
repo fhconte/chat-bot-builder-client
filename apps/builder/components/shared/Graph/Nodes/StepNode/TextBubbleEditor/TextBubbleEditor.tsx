@@ -38,7 +38,7 @@ export const TextBubbleEditor = ({
   const rememberedSelection = useRef<BaseSelection | null>(null)
   const textEditorRef = useRef<HTMLDivElement>(null)
 
-  // useEffect(() => console.log(maxLength), [maxLength, value])
+  // useEffect(() => console.log(maxLength, value), [maxLength, value])
 
   const randomEditorId = useMemo(
     () => `${Math.random().toString()}${increment ? `-${increment}` : ''}`,
@@ -105,9 +105,9 @@ export const TextBubbleEditor = ({
   }
 
   const handleChangeEditorContent = (val: TElement[]) => {
-    if (maxLength && val && getPlainTextValue(val).length > maxLength) {
-      console.log('impedir de inserir mais caracteres')
-    }
+    // if (maxLength && val && getPlainTextValue(val).length > maxLength) {
+    //   console.log('handleChangeEditorContent')
+    // }
 
     const timeout = setTimeout(() => {
       if (timeout) clearTimeout(timeout)
@@ -154,6 +154,15 @@ export const TextBubbleEditor = ({
         editableProps={{
           style: editorStyle,
           autoFocus: true,
+          maxLength: maxLength,
+          onDOMBeforeInput: (event) => {
+            if (event.inputType === 'insertText') {
+              const target = event?.target as HTMLElement
+              if (maxLength && target.innerText.length >= maxLength) {
+                event.preventDefault()
+              }
+            }
+          },
           onFocus: () => {
             if (editor.children.length === 0) return
             selectEditor(editor, {
