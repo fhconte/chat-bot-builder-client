@@ -154,15 +154,6 @@ export const TextBubbleEditor = ({
         editableProps={{
           style: editorStyle,
           autoFocus: true,
-          maxLength: maxLength,
-          onDOMBeforeInput: (event) => {
-            if (event.inputType === 'insertText') {
-              const target = event?.target as HTMLElement
-              if (maxLength && target.innerText.length >= maxLength) {
-                event.preventDefault()
-              }
-            }
-          },
           onFocus: () => {
             if (editor.children.length === 0) return
             selectEditor(editor, {
