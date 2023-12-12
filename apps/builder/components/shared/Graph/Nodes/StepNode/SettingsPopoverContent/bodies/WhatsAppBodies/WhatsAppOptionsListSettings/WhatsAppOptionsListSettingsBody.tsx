@@ -73,7 +73,6 @@ export const WhatsAppOptionsListSettingsBody = ({
             options.header?.content ? options.header.content.richText : []
           }
           onKeyUp={handleHeaderText}
-          maxLength={35}
         />
       </Stack>
       <Stack>
@@ -86,7 +85,6 @@ export const WhatsAppOptionsListSettingsBody = ({
             options.body?.content ? options.body.content.richText : []
           }
           onKeyUp={handleBodyText}
-          maxLength={1024}
         />
       </Stack>
       <Stack>
@@ -99,7 +97,6 @@ export const WhatsAppOptionsListSettingsBody = ({
             options.footer?.content ? options.footer.content.richText : []
           }
           onKeyUp={handleFooterText}
-          maxLength={20}
         />
       </Stack>
       <Stack>
@@ -114,7 +111,6 @@ export const WhatsAppOptionsListSettingsBody = ({
               : []
           }
           onKeyUp={handleListTitle}
-          maxLength={24}
         />
       </Stack>
       <Stack>
