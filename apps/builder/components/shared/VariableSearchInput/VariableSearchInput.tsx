@@ -11,6 +11,7 @@ import {
   useOutsideClick,
   Flex,
   InputProps,
+  Stack,
 } from '@chakra-ui/react'
 import { useTypebot } from 'contexts/TypebotContext'
 import cuid from 'cuid'
@@ -26,11 +27,14 @@ import {
   FormFieldCol,
   FormFieldRowMin,
   LabelField,
+  OrText,
+  CreateButton,
 } from './VariableSearchInput.style'
 import OctaButton from 'components/octaComponents/OctaButton/OctaButton'
 import OctaInput from 'components/octaComponents/OctaInput/OctaInput'
 import { CustomFieldTitle } from 'enums/customFieldsTitlesEnum'
 import { StepNodeContext } from '../Graph/Nodes/StepNode/StepNode/StepNode'
+import { useWorkspace } from 'contexts/WorkspaceContext'
 
 type Props = {
   initialVariableId?: string
@@ -40,6 +44,7 @@ type Props = {
   isCloseModal?: boolean
   labelDefault?: string
   isSaveContext?: boolean
+  isApi?: boolean
   handleOutsideClick?: () => void
   onSelectVariable: (
     variable: Pick<
@@ -67,6 +72,7 @@ export const VariableSearchInput = ({
   debounceTimeout = 1000,
   labelDefault = '',
   isSaveContext = true,
+  isApi,
   ...inputProps
 }: Props) => {
   const { onOpen, onClose } = useDisclosure()
@@ -86,6 +92,12 @@ export const VariableSearchInput = ({
     }
   }
 
+  const dontSave = {
+    id: '',
+    key: 'no-variable',
+    token: 'não salvar',
+  }
+
   const newVariable = {
     id: 'new',
     key: 'new-variable',
@@ -94,7 +106,8 @@ export const VariableSearchInput = ({
 
   const myVariable = (typebot?.variables.find(
     (v) => v.id === initialVariableId
-  ) || isSaveContext) as Variable
+  ) ||
+    (isSaveContext && !isApi && dontSave)) as Variable
 
   const initial = {
     ACTIONS: {
@@ -102,6 +115,8 @@ export const VariableSearchInput = ({
       options: [],
     },
   } as any
+
+  if (isSaveContext && !isApi) initial.ACTIONS.options.push(dontSave)
 
   if (addVariable) initial.ACTIONS.options.push(newVariable)
 
@@ -159,7 +174,7 @@ export const VariableSearchInput = ({
   )
   const { setIsPopoverOpened } = useContext(StepNodeContext)
 
-  const onInputChange = (event: any): void => {
+  const onInputChange = (event: any, actionData: any): void => {
     if (event) {
       if (event.key === 'no-variable') {
         onSelectVariable({} as any)

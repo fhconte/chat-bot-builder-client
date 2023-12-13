@@ -31,7 +31,9 @@ type Props = {
   maxHeight?: string
   minWidth?: string
   onChange?: (value: string) => void
-  postVariableSelected?: (variable: Pick<Variable, 'id' | 'name' | 'token'>) => void
+  postVariableSelected?: (
+    variable: Pick<Variable, 'id' | 'name' | 'token'>
+  ) => void
 }
 export const CodeEditor = ({
   defaultValue,
@@ -169,7 +171,8 @@ export const CodeEditor = ({
                   onSelectVariable={handleVariableSelected}
                   placeholder="Pesquise sua variável"
                   isCloseModal={false}
-                  labelDefault='Adicionar variável ao body:'
+                  labelDefault="Adicionar variável ao body:"
+                  isApi
                 />
               </FormControl>
             </Stack>
