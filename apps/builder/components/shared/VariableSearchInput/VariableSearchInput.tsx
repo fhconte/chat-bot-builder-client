@@ -11,6 +11,7 @@ import {
   useOutsideClick,
   Flex,
   InputProps,
+  Stack,
 } from '@chakra-ui/react'
 import { useTypebot } from 'contexts/TypebotContext'
 import cuid from 'cuid'
@@ -26,11 +27,14 @@ import {
   FormFieldCol,
   FormFieldRowMin,
   LabelField,
+  OrText,
+  CreateButton,
 } from './VariableSearchInput.style'
 import OctaButton from 'components/octaComponents/OctaButton/OctaButton'
 import OctaInput from 'components/octaComponents/OctaInput/OctaInput'
 import { CustomFieldTitle } from 'enums/customFieldsTitlesEnum'
 import { StepNodeContext } from '../Graph/Nodes/StepNode/StepNode/StepNode'
+import { useWorkspace } from 'contexts/WorkspaceContext'
 
 type Props = {
   initialVariableId?: string
@@ -86,22 +90,31 @@ export const VariableSearchInput = ({
     }
   }
 
+  const dontSave = {
+    id: '',
+    key: 'no-variable',
+    token: 'não salvar',
+  }
+
   const newVariable = {
     id: 'new',
     key: 'new-variable',
     token: '+ criar variável',
   }
 
-  const myVariable = (typebot?.variables.find(
+  let myVariable = (typebot?.variables.find(
     (v) => v.id === initialVariableId
-  ) || isSaveContext) as Variable
+  ) ||
+    (isSaveContext && dontSave)) as Variable
 
-  const initial = {
+  let initial = {
     ACTIONS: {
       label: '',
       options: [],
     },
   } as any
+
+  if (isSaveContext) initial.ACTIONS.options.push(dontSave)
 
   if (addVariable) initial.ACTIONS.options.push(newVariable)
 
@@ -159,7 +172,7 @@ export const VariableSearchInput = ({
   )
   const { setIsPopoverOpened } = useContext(StepNodeContext)
 
-  const onInputChange = (event: any): void => {
+  const onInputChange = (event: any, actionData: any): void => {
     if (event) {
       if (event.key === 'no-variable') {
         onSelectVariable({} as any)
