@@ -72,7 +72,7 @@ export const VariableSearchInput = ({
   debounceTimeout = 1000,
   labelDefault = '',
   isSaveContext = true,
-  isApi,
+  isApi = false,
   ...inputProps
 }: Props) => {
   const { onOpen, onClose } = useDisclosure()
