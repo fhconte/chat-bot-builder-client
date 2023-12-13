@@ -44,6 +44,7 @@ type Props = {
   isCloseModal?: boolean
   labelDefault?: string
   isSaveContext?: boolean
+  isApi?: boolean
   handleOutsideClick?: () => void
   onSelectVariable: (
     variable: Pick<
@@ -71,6 +72,7 @@ export const VariableSearchInput = ({
   debounceTimeout = 1000,
   labelDefault = '',
   isSaveContext = true,
+  isApi,
   ...inputProps
 }: Props) => {
   const { onOpen, onClose } = useDisclosure()
@@ -102,19 +104,19 @@ export const VariableSearchInput = ({
     token: '+ criar variável',
   }
 
-  let myVariable = (typebot?.variables.find(
+  const myVariable = (typebot?.variables.find(
     (v) => v.id === initialVariableId
   ) ||
-    (isSaveContext && dontSave)) as Variable
+    (isSaveContext && !isApi && dontSave)) as Variable
 
-  let initial = {
+  const initial = {
     ACTIONS: {
       label: '',
       options: [],
     },
   } as any
 
-  if (isSaveContext) initial.ACTIONS.options.push(dontSave)
+  if (isSaveContext && !isApi) initial.ACTIONS.options.push(dontSave)
 
   if (addVariable) initial.ACTIONS.options.push(newVariable)
 
