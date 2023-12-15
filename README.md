@@ -1,4 +1,4 @@
-# Octadesk Bot Builder V2
+# Bot Builder
 
 This repository is a fork from typebot (http://www.typebot.io ! https://github.com/baptisteArno/typebot.io)
 
